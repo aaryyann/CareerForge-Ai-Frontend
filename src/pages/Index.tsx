@@ -76,9 +76,9 @@ export default function Index() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-hero-gradient min-h-screen flex items-center">
+      <section className="relative overflow-hidden bg-muted min-h-screen flex items-center">
         <div className="mx-auto max-w-7xl px-6 lg:px-8 pt-20">
           <div className="mx-auto max-w-4xl text-center">
             <motion.div
@@ -92,17 +92,17 @@ export default function Index() {
                 with AI Intelligence
               </h1>
             </motion.div>
-            
+
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
               className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed"
             >
-              Transform your professional journey with AI-powered mentorship matching, 
+              Transform your professional journey with AI-powered mentorship matching,
               personalized career roadmaps, and intelligent opportunity discovery.
             </motion.p>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -123,7 +123,7 @@ export default function Index() {
             </motion.div>
           </div>
         </div>
-        
+
         {/* Floating elements */}
         <motion.div
           className="absolute top-20 left-10 w-20 h-20 bg-emerald-500/20 rounded-full blur-xl"
@@ -161,7 +161,7 @@ export default function Index() {
               and connect you with opportunities that matter.
             </motion.p>
           </div>
-          
+
           <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
             <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">
               {features.map((feature, index) => (
@@ -201,7 +201,7 @@ export default function Index() {
               <span className="hero-text"> worldwide</span>
             </motion.h2>
           </div>
-          
+
           <div className="mx-auto max-w-4xl">
             <motion.div
               key={currentTestimonial}
@@ -221,15 +221,14 @@ export default function Index() {
                 </div>
               </figcaption>
             </motion.div>
-            
+
             <div className="flex justify-center mt-12 space-x-2">
               {testimonials.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentTestimonial(index)}
-                  className={`w-3 h-3 rounded-full transition-colors ${
-                    index === currentTestimonial ? "bg-primary" : "bg-muted-foreground/30"
-                  }`}
+                  className={`w-3 h-3 rounded-full transition-colors ${index === currentTestimonial ? "bg-primary" : "bg-muted-foreground/30"
+                    }`}
                 />
               ))}
             </div>
@@ -238,7 +237,7 @@ export default function Index() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 bg-hero-gradient">
+      <section className="py-24 bg-muted/20">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
             <motion.h2
