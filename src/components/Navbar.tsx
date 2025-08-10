@@ -15,6 +15,7 @@ const navigation = [
   { name: "Roles", href: "/role-suggest" },
   { name: "Roadmap", href: "/roadmap" },
   { name: "Analytics", href: "/analytics" },
+  { name: "Voice", href: "/voice-input" },
   { name: "AI Chat", href: "/ai-chat" },
 ]
 
