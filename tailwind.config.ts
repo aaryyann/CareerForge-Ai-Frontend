@@ -158,10 +158,10 @@ export default {
 				},
 				'glow': {
 					'0%, 100%': {
-						boxShadow: '0 0 20px rgba(16, 185, 129, 0.3)'
+						boxShadow: '0 0 20px rgba(244, 63, 94, 0.3)'
 					},
 					'50%': {
-						boxShadow: '0 0 40px rgba(16, 185, 129, 0.6)'
+						boxShadow: '0 0 40px rgba(244, 63, 94, 0.6)'
 					}
 				}
 			},
@@ -176,9 +176,9 @@ export default {
 			backgroundImage: {
 				'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
 				'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-				'hero-gradient': 'linear-gradient(135deg, hsl(0, 0%, 0%) 0%, hsl(163, 94%, 6%) 100%)',
-				'card-gradient': 'linear-gradient(135deg, hsl(0, 0%, 3%) 0%, hsl(163, 40%, 8%) 100%)',
-				'premium-gradient': 'linear-gradient(135deg, hsl(160, 84%, 39%) 0%, hsl(38, 92%, 50%) 100%)'
+				'hero-gradient': 'linear-gradient(135deg, hsl(0, 0%, 0%) 0%, hsl(350, 40%, 8%) 100%)',
+				'card-gradient': 'linear-gradient(135deg, hsl(0, 0%, 3%) 0%, hsl(350, 40%, 8%) 100%)',
+				'premium-gradient': 'linear-gradient(135deg, hsl(350, 89%, 60%) 0%, hsl(25, 95%, 53%) 100%)'
 			}
 		}
 	},
