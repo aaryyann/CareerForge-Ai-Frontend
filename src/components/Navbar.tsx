@@ -10,14 +10,12 @@ import { useTheme } from "@/components/ThemeProvider"
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard" },
-  { name: "Resume Upload", href: "/upload-resume" },
-  { name: "Mentor Match", href: "/mentor-match" },
-  { name: "Role Suggestions", href: "/role-suggest" },
+  { name: "Upload", href: "/upload-resume" },
+  { name: "Mentors", href: "/mentor-match" },
+  { name: "Roles", href: "/role-suggest" },
   { name: "Roadmap", href: "/roadmap" },
   { name: "Analytics", href: "/analytics" },
-  { name: "Voice Input", href: "/voice-input" },
   { name: "AI Chat", href: "/ai-chat" },
-  { name: "Benchmarks", href: "/model-benchmarks" },
 ]
 
 export function Navbar() {
@@ -26,90 +24,101 @@ export function Navbar() {
   const location = useLocation()
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border/50">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="flex h-16 justify-between items-center">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-14 justify-between items-center">
           {/* Logo */}
           <Link to="/" className="flex items-center">
             <motion.div
               whileHover={{ scale: 1.05 }}
-              className="text-2xl font-bold hero-text"
+              whileTap={{ scale: 0.95 }}
+              className="text-xl font-bold hero-text tracking-tight"
             >
               CareerForge AI
             </motion.div>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex lg:gap-x-8">
+          <div className="hidden md:flex md:items-center md:gap-x-1">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
-                className={`text-sm font-medium transition-colors hover:text-primary relative ${
-                  location.pathname === item.href
-                    ? "text-primary"
-                    : "text-muted-foreground"
-                }`}
+                className="group relative"
               >
-                {item.name}
-                {location.pathname === item.href && (
-                  <motion.div
-                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary"
-                    layoutId="navbar-indicator"
-                  />
-                )}
+                <motion.div
+                  whileHover={{ y: -1 }}
+                  className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                    location.pathname === item.href
+                      ? "text-primary bg-primary/10"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                  }`}
+                >
+                  {item.name}
+                </motion.div>
               </Link>
             ))}
           </div>
 
-          {/* Theme Toggle & Auth Buttons */}
-          <div className="hidden lg:flex lg:gap-x-4 lg:items-center">
+          {/* Right Section */}
+          <div className="flex items-center gap-3">
+            {/* Theme Toggle */}
             <Button
               variant="ghost"
-              size="icon"
+              size="sm"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="hover:bg-accent"
+              className="hover:bg-accent rounded-lg h-9 w-9 p-0"
             >
-              {theme === "dark" ? (
-                <Sun className="h-5 w-5" />
-              ) : (
-                <Moon className="h-5 w-5" />
-              )}
+              <motion.div
+                whileHover={{ rotate: 180 }}
+                transition={{ duration: 0.3 }}
+              >
+                {theme === "dark" ? (
+                  <Sun className="h-4 w-4" />
+                ) : (
+                  <Moon className="h-4 w-4" />
+                )}
+              </motion.div>
             </Button>
-            <Link to="/signin">
-              <Button variant="ghost" className="btn-ghost-premium">
-                Sign In
-              </Button>
-            </Link>
-            <Link to="/signup">
-              <Button className="btn-hero">Get Started</Button>
-            </Link>
-          </div>
 
-          {/* Mobile menu button */}
-          <div className="flex lg:hidden items-center gap-2">
+            {/* Auth Buttons - Desktop */}
+            <div className="hidden md:flex md:items-center md:gap-2">
+              <Link to="/signin">
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  className="hover:bg-accent rounded-lg px-4 py-2 text-sm font-medium"
+                >
+                  Sign In
+                </Button>
+              </Link>
+              <Link to="/signup">
+                <Button 
+                  size="sm"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg px-4 py-2 text-sm font-medium shadow-sm"
+                >
+                  Get Started
+                </Button>
+              </Link>
+            </div>
+
+            {/* Mobile menu button */}
             <Button
               variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="hover:bg-accent"
-            >
-              {theme === "dark" ? (
-                <Sun className="h-5 w-5" />
-              ) : (
-                <Moon className="h-5 w-5" />
-              )}
-            </Button>
-            <Button
-              variant="ghost"
+              size="sm"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden"
+              className="md:hidden hover:bg-accent rounded-lg h-9 w-9 p-0"
             >
-              {mobileMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
+              <motion.div
+                animate={{ rotate: mobileMenuOpen ? 90 : 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                {mobileMenuOpen ? (
+                  <X className="h-4 w-4" />
+                ) : (
+                  <Menu className="h-4 w-4" />
+                )}
+              </motion.div>
             </Button>
           </div>
         </div>
@@ -119,34 +128,51 @@ export function Navbar() {
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-background border-b border-border"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden bg-background/95 backdrop-blur-md border-b border-border/20"
           >
-            <div className="px-6 py-4 space-y-3">
-              {navigation.map((item) => (
-                <Link
+            <div className="px-4 py-4 space-y-2">
+              {navigation.map((item, index) => (
+                <motion.div
                   key={item.name}
-                  to={item.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`block py-2 text-base font-medium transition-colors ${
-                    location.pathname === item.href
-                      ? "text-primary"
-                      : "text-muted-foreground hover:text-primary"
-                  }`}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 }}
                 >
-                  {item.name}
-                </Link>
+                  <Link
+                    to={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`block px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      location.pathname === item.href
+                        ? "text-primary bg-primary/10"
+                        : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                </motion.div>
               ))}
-              <div className="pt-4 space-y-3">
+              
+              <div className="pt-4 mt-4 border-t border-border/20 space-y-2">
                 <Link to="/signin" onClick={() => setMobileMenuOpen(false)}>
-                  <Button variant="ghost" className="w-full btn-ghost-premium">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    className="w-full justify-start hover:bg-accent rounded-lg"
+                  >
                     Sign In
                   </Button>
                 </Link>
                 <Link to="/signup" onClick={() => setMobileMenuOpen(false)}>
-                  <Button className="w-full btn-hero">Get Started</Button>
+                  <Button 
+                    size="sm"
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-sm"
+                  >
+                    Get Started
+                  </Button>
                 </Link>
               </div>
             </div>
