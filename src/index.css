@@ -93,7 +93,7 @@
   }
 
   html {
-    @apply dark;
+    @apply antialiased;
   }
 
   body {
