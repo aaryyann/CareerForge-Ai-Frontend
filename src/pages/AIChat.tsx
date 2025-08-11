@@ -61,7 +61,7 @@ const mockMessages: Message[] = [
   },
   {
     id: 2,
-    type: "user", 
+    type: "user",
     content: "I'm a frontend developer with 3 years of experience. I want to transition to full-stack development but I'm not sure where to start.",
     timestamp: new Date()
   },
@@ -153,7 +153,7 @@ export default function AIChat() {
     <SidebarProvider>
       <div className="min-h-screen bg-background flex w-full">
         <Navbar />
-        
+
         {/* Chat Sidebar */}
         <Sidebar className="border-r border-border mt-16">
           <SidebarContent>
@@ -162,24 +162,23 @@ export default function AIChat() {
                 New Chat
               </Button>
             </div>
-            
+
             <SidebarGroup>
               <SidebarGroupLabel>Recent Chats</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {sessions.map((session) => (
                     <SidebarMenuItem key={session.id}>
-                      <SidebarMenuButton 
+                      <SidebarMenuButton
                         onClick={() => setCurrentSession(session)}
-                        className={`w-full justify-start ${
-                          currentSession.id === session.id ? "bg-accent" : ""
-                        }`}
+                        className={`w-full h-16 justify-start ${currentSession.id === session.id ? "bg-accent" : ""
+                          }`}
                       >
                         <div className="flex-1 min-w-0">
-                          <div className="truncate font-medium text-sm">
+                          <div className="truncate font-medium text-sm p-1">
                             {session.title}
                           </div>
-                          <div className="truncate text-xs text-muted-foreground">
+                          <div className="truncate text-xs text-muted-foreground p-1">
                             {session.lastMessage}
                           </div>
                         </div>
@@ -239,9 +238,8 @@ export default function AIChat() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
-                    className={`flex items-start space-x-3 ${
-                      message.type === "user" ? "justify-end" : "justify-start"
-                    }`}
+                    className={`flex items-start space-x-3 ${message.type === "user" ? "justify-end" : "justify-start"
+                      }`}
                   >
                     {message.type === "ai" && (
                       <Avatar className="h-8 w-8 bg-primary">
@@ -250,26 +248,24 @@ export default function AIChat() {
                         </AvatarFallback>
                       </Avatar>
                     )}
-                    
-                    <Card className={`max-w-[70%] ${
-                      message.type === "user" 
-                        ? "bg-primary text-primary-foreground" 
-                        : "card-premium"
-                    }`}>
+
+                    <Card className={`max-w-[70%] ${message.type === "user"
+                      ? "bg-primary text-primary-foreground"
+                      : "card-premium"
+                      }`}>
                       <CardContent className="p-4">
                         <div className="prose prose-sm max-w-none">
                           <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
                             {message.content}
                           </pre>
                         </div>
-                        <div className={`text-xs mt-2 ${
-                          message.type === "user" 
-                            ? "text-primary-foreground/70" 
-                            : "text-muted-foreground"
-                        }`}>
-                          {message.timestamp.toLocaleTimeString([], { 
-                            hour: '2-digit', 
-                            minute: '2-digit' 
+                        <div className={`text-xs mt-2 ${message.type === "user"
+                          ? "text-primary-foreground/70"
+                          : "text-muted-foreground"
+                          }`}>
+                          {message.timestamp.toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit'
                           })}
                         </div>
                       </CardContent>
@@ -285,7 +281,7 @@ export default function AIChat() {
                   </motion.div>
                 ))}
               </AnimatePresence>
-              
+
               {/* Typing Indicator */}
               {isTyping && (
                 <motion.div
@@ -321,7 +317,7 @@ export default function AIChat() {
                   </Card>
                 </motion.div>
               )}
-              
+
               <div ref={messagesEndRef} />
             </div>
           </ScrollArea>

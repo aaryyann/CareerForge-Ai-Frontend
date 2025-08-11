@@ -1,12 +1,13 @@
-
 "use client"
 
 import { useState } from "react"
 import { Link, useLocation } from "react-router-dom"
-import { Menu, X, Sun, Moon } from "lucide-react"
+import { Menu, X, Sun, Moon, User } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { useTheme } from "@/components/ThemeProvider"
+import { useAuth } from "@/hooks/useAuth"
+import { ProfileModal } from "@/components/ProfileModal"
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard" },
@@ -21,7 +22,9 @@ const navigation = [
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [profileModalOpen, setProfileModalOpen] = useState(false)
   const { theme, setTheme } = useTheme()
+  const { user, isLoading } = useAuth()
   const location = useLocation()
 
   return (
@@ -49,11 +52,10 @@ export function Navbar() {
               >
                 <motion.div
                   whileHover={{ y: -1 }}
-                  className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                    location.pathname === item.href
+                  className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${location.pathname === item.href
                       ? "text-primary bg-primary/10"
                       : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                  }`}
+                    }`}
                 >
                   {item.name}
                 </motion.div>
@@ -82,25 +84,57 @@ export function Navbar() {
               </motion.div>
             </Button>
 
-            {/* Auth Buttons - Desktop */}
+            {/* Enhanced Auth Section - Desktop */}
             <div className="hidden md:flex md:items-center md:gap-2">
-              <Link to="/signin">
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  className="hover:bg-accent rounded-lg px-4 py-2 text-sm font-medium"
+              {user ? (
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
-                  Sign In
-                </Button>
-              </Link>
-              <Link to="/signup">
-                <Button 
-                  size="sm"
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg px-4 py-2 text-sm font-medium shadow-sm"
-                >
-                  Get Started
-                </Button>
-              </Link>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setProfileModalOpen(true)}
+                    className="hover:bg-accent rounded-xl px-4 py-2 text-sm font-medium flex items-center gap-2 hover:shadow-lg hover:shadow-primary/20 transition-all duration-200 group"
+                  >
+                    <User className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
+                    Profile
+                  </Button>
+                </motion.div>
+              ) : (
+                <>
+                  <motion.div
+                    whileHover={{ scale: 1.05, y: -1 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  >
+                    <Link to="/signin">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="hover:bg-accent rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200"
+                      >
+                        Sign In
+                      </Button>
+                    </Link>
+                  </motion.div>
+                  <motion.div
+                    whileHover={{ scale: 1.05, y: -1 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  >
+                    <Link to="/signup">
+                      <Button
+                        size="sm"
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-4 py-2 text-sm font-medium shadow-sm hover:shadow-lg hover:shadow-primary/30 transition-all duration-200"
+                      >
+                        Get Started
+                      </Button>
+                    </Link>
+                  </motion.div>
+                </>
+              )}
             </div>
 
             {/* Mobile menu button */}
@@ -146,40 +180,65 @@ export function Navbar() {
                   <Link
                     to={item.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`block px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      location.pathname === item.href
+                    className={`block px-3 py-2 rounded-lg text-sm font-medium transition-colors ${location.pathname === item.href
                         ? "text-primary bg-primary/10"
                         : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
-                    }`}
+                      }`}
                   >
                     {item.name}
                   </Link>
                 </motion.div>
               ))}
-              
+
               <div className="pt-4 mt-4 border-t border-border/20 space-y-2">
-                <Link to="/signin" onClick={() => setMobileMenuOpen(false)}>
-                  <Button 
-                    variant="ghost" 
+                {user ? (
+                  <Button
+                    variant="ghost"
                     size="sm"
-                    className="w-full justify-start hover:bg-accent rounded-lg"
+                    onClick={() => {
+                      setProfileModalOpen(true)
+                      setMobileMenuOpen(false)
+                    }}
+                    className="w-full justify-start hover:bg-accent rounded-lg flex items-center gap-2"
                   >
-                    Sign In
+                    <User className="h-4 w-4" />
+                    Profile
                   </Button>
-                </Link>
-                <Link to="/signup" onClick={() => setMobileMenuOpen(false)}>
-                  <Button 
-                    size="sm"
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-sm"
-                  >
-                    Get Started
-                  </Button>
-                </Link>
+                ) : (
+                  <>
+                    <Link to="/signin" onClick={() => setMobileMenuOpen(false)}>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="w-full justify-start hover:bg-accent rounded-lg"
+                      >
+                        Sign In
+                      </Button>
+                    </Link>
+                    <Link to="/signup" onClick={() => setMobileMenuOpen(false)}>
+                      <Button
+                        size="sm"
+                        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg shadow-sm"
+                      >
+                        Get Started
+                      </Button>
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Profile Modal */}
+      {user && (
+        <ProfileModal
+          isOpen={profileModalOpen}
+          onClose={() => setProfileModalOpen(false)}
+          user={user}
+        />
+      )}
     </nav>
   )
 }
