@@ -141,15 +141,15 @@ Would you like me to create a detailed roadmap with specific resources for each 
                       }`}
                     >
                       {isListening ? (
-                        <MicOff className="h-12 w-12 text-white" />
+                        <MicOff className="h-12 w-12 text-primary-foreground" />
                       ) : (
-                        <Mic className="h-12 w-12 text-white" />
+                        <Mic className="h-12 w-12 text-primary-foreground" />
                       )}
                       
                       {/* Audio Level Visualization */}
                       {isListening && (
                         <motion.div
-                          className="absolute inset-0 rounded-full border-4 border-white/30"
+                          className="absolute inset-0 rounded-full border-4 border-primary-foreground/30"
                           animate={{
                             scale: [1, 1 + audioLevel / 200, 1],
                           }}
