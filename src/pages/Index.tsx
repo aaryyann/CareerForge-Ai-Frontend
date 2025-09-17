@@ -6,7 +6,6 @@ import { motion } from "framer-motion"
 import { ArrowRight, Sparkles, Zap, Users, Target, BarChart3, MessageCircle } from "lucide-react"
 import { Link } from "react-router-dom"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
 import { Navbar } from "@/components/Navbar"
 import { Footer } from "@/components/Footer"
 
