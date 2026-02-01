@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Navbar } from "@/components/Navbar"
 
 const mockApplications = [
   {
@@ -36,7 +37,8 @@ export default function Applications() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-6 py-8">
+      <Navbar />
+      <div className="container mx-auto px-6 py-8 pt-20">
         <div className="mb-8">
           <h1 className="text-3xl font-bold">Applications</h1>
           <p className="text-muted-foreground mt-2">Review and manage candidate applications</p>

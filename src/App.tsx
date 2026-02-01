@@ -6,7 +6,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/hooks/useAuth";
-import { RoleBasedRoute } from "@/components/RoleBasedRoute";
+import { AuthGuard } from "@/components/shared/AuthGuard";
+import { AuthRedirect } from "@/components/shared/AuthRedirect";
 import Index from "./pages/Index";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
@@ -14,26 +15,22 @@ import ChooseRole from "./pages/ChooseRole";
 import JobSeekerRegister from "./pages/register/JobSeeker";
 import MentorRegister from "./pages/register/Mentor";
 import RecruiterRegister from "./pages/register/Recruiter";
-import Dashboard from "./pages/Dashboard";
-import RecruiterDashboard from "./pages/RecruiterDashboard";
-import MentorDashboard from "./pages/MentorDashboard";
-import UploadResume from "./pages/UploadResume";
-import MentorMatch from "./pages/MentorMatch";
-import RoleSuggest from "./pages/RoleSuggest";
-import Roadmap from "./pages/Roadmap";
-import Analytics from "./pages/Analytics";
-import VoiceInput from "./pages/VoiceInput";
-import AIChat from "./pages/AIChat";
-import ModelBenchmarks from "./pages/ModelBenchmarks";
+import Dashboard from "./pages/jobseeker/Dashboard";
+import RecruiterDashboard from "./pages/recruiter/RecruiterDashboard";
+import MentorDashboard from "./pages/mentor/MentorDashboard";
+import UploadResume from "./pages/jobseeker/UploadResume";
+import MentorMatch from "./pages/jobseeker/MentorMatch";
+import RoleSuggest from "./pages/jobseeker/RoleSuggest";
+import Roadmap from "./pages/jobseeker/Roadmap";
+import Analytics from "./pages/recruiter/Analytics";
+import VoiceInput from "./pages/shared/VoiceInput";
+import AIChat from "./pages/shared/AIChat";
+import ModelBenchmarks from "./pages/shared/ModelBenchmarks";
 import NotFound from "./pages/NotFound";
-// Job Seeker Routes
-import JobMatches from "./pages/jobseeker/JobMatches";
-import Profile from "./pages/jobseeker/Profile";
-// Recruiter Routes
+// import Profile from "./pages/jobseeker/Profile";
 import JobPostings from "./pages/recruiter/JobPostings";
 import CandidateSearch from "./pages/recruiter/CandidateSearch";
 import Applications from "./pages/recruiter/Applications";
-// Mentor Routes
 import MenteeMatches from "./pages/mentor/MenteeMatches";
 import Sessions from "./pages/mentor/Sessions";
 
@@ -44,119 +41,111 @@ const App = () => (
     <ThemeProvider defaultTheme="dark" storageKey="careerforge-ui-theme">
       <AuthProvider>
         <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/signin" element={<SignIn />} />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/choose-role" element={<ChooseRole />} />
+              <Route path="/redirect" element={<AuthRedirect />} />
               <Route path="/register/jobseeker" element={<JobSeekerRegister />} />
               <Route path="/register/mentor" element={<MentorRegister />} />
               <Route path="/register/recruiter" element={<RecruiterRegister />} />
-              
-              {/* Job Seeker Routes */}
+
               <Route path="/dashboard" element={
-                <RoleBasedRoute allowedRoles={["jobseeker"]}>
+                <AuthGuard allowedRoles={["jobseeker"]}>
                   <Dashboard />
-                </RoleBasedRoute>
+                </AuthGuard>
               } />
-              <Route path="/job-matches" element={
-                <RoleBasedRoute allowedRoles={["jobseeker"]}>
-                  <JobMatches />
-                </RoleBasedRoute>
-              } />
-              <Route path="/profile" element={
-                <RoleBasedRoute allowedRoles={["jobseeker"]}>
+              {/* <Route path="/profile" element={
+                <AuthGuard allowedRoles={["jobseeker"]}>
                   <Profile />
-                </RoleBasedRoute>
-              } />
+                </AuthGuard>
+              } /> */}
               <Route path="/upload-resume" element={
-                <RoleBasedRoute allowedRoles={["jobseeker"]}>
+                <AuthGuard allowedRoles={["jobseeker"]}>
                   <UploadResume />
-                </RoleBasedRoute>
+                </AuthGuard>
               } />
               <Route path="/mentor-match" element={
-                <RoleBasedRoute allowedRoles={["jobseeker"]}>
+                <AuthGuard allowedRoles={["jobseeker"]}>
                   <MentorMatch />
-                </RoleBasedRoute>
+                </AuthGuard>
               } />
               <Route path="/role-suggest" element={
-                <RoleBasedRoute allowedRoles={["jobseeker"]}>
+                <AuthGuard allowedRoles={["jobseeker"]}>
                   <RoleSuggest />
-                </RoleBasedRoute>
+                </AuthGuard>
               } />
               <Route path="/roadmap" element={
-                <RoleBasedRoute allowedRoles={["jobseeker"]}>
+                <AuthGuard allowedRoles={["jobseeker"]}>
                   <Roadmap />
-                </RoleBasedRoute>
+                </AuthGuard>
               } />
-              
-              {/* Recruiter Routes */}
+
               <Route path="/recruiter-dashboard" element={
-                <RoleBasedRoute allowedRoles={["recruiter"]}>
+                <AuthGuard allowedRoles={["recruiter"]}>
                   <RecruiterDashboard />
-                </RoleBasedRoute>
+                </AuthGuard>
               } />
               <Route path="/job-postings" element={
-                <RoleBasedRoute allowedRoles={["recruiter"]}>
+                <AuthGuard allowedRoles={["recruiter"]}>
                   <JobPostings />
-                </RoleBasedRoute>
+                </AuthGuard>
               } />
               <Route path="/candidate-search" element={
-                <RoleBasedRoute allowedRoles={["recruiter"]}>
+                <AuthGuard allowedRoles={["recruiter"]}>
                   <CandidateSearch />
-                </RoleBasedRoute>
+                </AuthGuard>
               } />
               <Route path="/applications" element={
-                <RoleBasedRoute allowedRoles={["recruiter"]}>
+                <AuthGuard allowedRoles={["recruiter"]}>
                   <Applications />
-                </RoleBasedRoute>
+                </AuthGuard>
               } />
               <Route path="/analytics" element={
-                <RoleBasedRoute allowedRoles={["recruiter"]}>
+                <AuthGuard allowedRoles={["recruiter"]}>
                   <Analytics />
-                </RoleBasedRoute>
+                </AuthGuard>
               } />
-              
-              {/* Mentor Routes */}
+
               <Route path="/mentor-dashboard" element={
-                <RoleBasedRoute allowedRoles={["mentor"]}>
+                <AuthGuard allowedRoles={["mentor"]}>
                   <MentorDashboard />
-                </RoleBasedRoute>
+                </AuthGuard>
               } />
               <Route path="/mentee-matches" element={
-                <RoleBasedRoute allowedRoles={["mentor"]}>
+                <AuthGuard allowedRoles={["mentor"]}>
                   <MenteeMatches />
-                </RoleBasedRoute>
+                </AuthGuard>
               } />
               <Route path="/sessions" element={
-                <RoleBasedRoute allowedRoles={["mentor"]}>
+                <AuthGuard allowedRoles={["mentor"]}>
                   <Sessions />
-                </RoleBasedRoute>
+                </AuthGuard>
               } />
-              
-              {/* Shared Routes */}
+
               <Route path="/voice-input" element={
-                <RoleBasedRoute allowedRoles={["jobseeker", "mentor"]}>
+                <AuthGuard allowedRoles={["jobseeker", "mentor"]}>
                   <VoiceInput />
-                </RoleBasedRoute>
+                </AuthGuard>
               } />
               <Route path="/ai-chat" element={
-                <RoleBasedRoute allowedRoles={["jobseeker", "mentor"]}>
+                <AuthGuard allowedRoles={["jobseeker", "mentor"]}>
                   <AIChat />
-                </RoleBasedRoute>
+                </AuthGuard>
               } />
               <Route path="/model-benchmarks" element={
-                <RoleBasedRoute allowedRoles={["jobseeker", "recruiter", "mentor"]}>
+                <AuthGuard allowedRoles={["jobseeker", "recruiter", "mentor"]}>
                   <ModelBenchmarks />
-                </RoleBasedRoute>
+                </AuthGuard>
               } />
-              
+
               <Route path="*" element={<NotFound />} />
             </Routes>
-        </BrowserRouter>
+          </BrowserRouter>
         </TooltipProvider>
       </AuthProvider>
     </ThemeProvider>

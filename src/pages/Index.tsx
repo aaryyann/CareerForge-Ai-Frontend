@@ -1,13 +1,14 @@
 
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { ArrowRight, Sparkles, Zap, Users, Target, BarChart3, MessageCircle } from "lucide-react"
-import { Link } from "react-router-dom"
+import { Link, Navigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Navbar } from "@/components/Navbar"
 import { Footer } from "@/components/Footer"
+import { useAuthNavigation } from "@/hooks/useAuthNavigation"
 
 const features = [
   {
@@ -71,6 +72,15 @@ const testimonials = [
 
 export default function Index() {
   const [currentTestimonial, setCurrentTestimonial] = useState(0)
+  const { shouldRedirectToDashboard, getDashboardRoute } = useAuthNavigation()
+
+  // Redirect authenticated users to their appropriate dashboard
+  if (shouldRedirectToDashboard()) {
+    const dashboardRoute = getDashboardRoute()
+    if (dashboardRoute) {
+      return <Navigate to={dashboardRoute} replace />
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -78,7 +88,7 @@ export default function Index() {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-muted min-h-screen flex items-center">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8 pt-20">
+        <div className="w-full px-6 lg:px-8 pt-20">
           <div className="mx-auto max-w-4xl text-center">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -138,7 +148,7 @@ export default function Index() {
 
       {/* Features Section */}
       <section id="features" className="py-24 bg-background">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="w-full px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
@@ -188,7 +198,7 @@ export default function Index() {
 
       {/* Testimonials Section */}
       <section className="py-24 bg-muted/20">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="w-full px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
@@ -237,7 +247,7 @@ export default function Index() {
 
       {/* CTA Section */}
       <section className="py-24 bg-muted/20">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="w-full px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
             <motion.h2
               initial={{ opacity: 0, y: 20 }}

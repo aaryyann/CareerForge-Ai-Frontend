@@ -35,7 +35,7 @@ export default function RecruiterDashboard() {
       <Navbar />
       
       <div className="px-6 py-24">
-        <div className="mx-auto max-w-7xl">
+        <div className="w-full">
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}

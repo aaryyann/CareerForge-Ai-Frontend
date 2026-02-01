@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Navbar } from "@/components/Navbar"
-import { useAuth } from "@/hooks/useAuth"
+import { useAuth } from "@/hooks/useAuthHook"
 import { toast } from "sonner"
 
 const jobTitles = [
@@ -49,18 +49,19 @@ export default function RecruiterRegister() {
     }
 
     try {
-      const [firstName, ...lastNameParts] = formData.fullName.split(' ')
-      await completeProfile({
-        first_name: firstName,
-        last_name: lastNameParts.join(' ') || '',
-        role: "recruiter",
-        bio: `${formData.jobTitle} at ${formData.companyName}`
+      await completeProfile("recruiter", {
+        fullName: formData.fullName,
+        companyName: formData.companyName,
+        bio: `${formData.jobTitle} at ${formData.companyName}`,
+        companySize: formData.companySize,
+        industry: formData.industry,
+        jobTitle: formData.jobTitle
       })
       
       toast.success("Profile completed successfully!")
-      navigate("/recruiter/job-postings")
-    } catch (error: any) {
-      toast.error(error.message || "Failed to complete profile")
+      navigate("/redirect")
+    } catch (error: unknown) {
+      toast.error((error as Error).message || "Failed to complete profile")
     }
   }
 

@@ -7,9 +7,9 @@ import { Menu, X, Sun, Moon, User } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { useTheme } from "@/components/ThemeProvider"
-import { useAuth } from "@/hooks/useAuth"
-import { ProfileModal } from "@/components/ProfileModal"
-import { useRoleBasedNavigation } from "@/components/RoleBasedNavigation"
+import { useAuth } from "@/hooks/useAuthHook"
+import { ProfileModal } from "@/components/shared/ProfileModal"
+import { useNavigation } from "@/components/shared/Navigation"
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -17,11 +17,11 @@ export function Navbar() {
   const { theme, setTheme } = useTheme()
   const { user, isLoading, signOut } = useAuth()
   const location = useLocation()
-  const navigation = useRoleBasedNavigation()
+  const navigation = useNavigation()
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="flex h-14 justify-between items-center">
           {/* Logo */}
           <Link to="/" className="flex items-center">
@@ -35,7 +35,7 @@ export function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex md:items-center md:gap-x-1">
+          <div className="hidden md:flex md:items-center md:gap-x-2 flex-1 justify-center">
             {navigation.map((item) => (
               <Link
                 key={item.name}
@@ -44,7 +44,7 @@ export function Navbar() {
               >
                 <motion.div
                   whileHover={{ y: -1 }}
-                  className={`px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                     location.pathname === item.href
                       ? "text-primary bg-primary/10"
                       : "text-muted-foreground hover:text-foreground hover:bg-accent/50"

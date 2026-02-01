@@ -11,7 +11,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Navbar } from "@/components/Navbar"
-import { useAuth } from "@/hooks/useAuth"
+import { useAuth } from "@/hooks/useAuthHook"
 import { toast } from "sonner"
 
 const experienceOptions = [
@@ -28,8 +28,7 @@ export default function JobSeekerRegister() {
   const { completeProfile, user } = useAuth()
   const [selectedRoles, setSelectedRoles] = useState<string[]>([])
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    fullName: "",
     bio: "",
     experience: "",
     resume: null as File | null
@@ -53,23 +52,27 @@ export default function JobSeekerRegister() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!formData.firstName || !formData.lastName || !formData.bio) {
+    if (!formData.fullName || !formData.bio) {
       toast.error("Please fill in all required fields")
       return
     }
 
     try {
-      await completeProfile({
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        role: "jobseeker",
-        bio: formData.bio
+      console.log("Form data:", formData)
+      console.log("Selected roles:", selectedRoles)
+      console.log("Calling completeProfile...")
+      
+      await completeProfile("jobseeker", {
+        fullName: formData.fullName,
+        bio: formData.bio,
+        preferredRoles: selectedRoles,
+        yearOfExperience: formData.experience
       })
       
       toast.success("Profile completed successfully!")
-      navigate("/jobseeker/profile")
-    } catch (error: any) {
-      toast.error(error.message || "Failed to complete profile")
+      navigate("/redirect")
+    } catch (error: unknown) {
+      toast.error((error as Error).message || "Failed to complete profile")
     }
   }
 
@@ -104,27 +107,15 @@ export default function JobSeekerRegister() {
                 </div>
 
                 {/* Personal Information */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="firstName">First Name</Label>
-                    <Input
-                      id="firstName"
-                      className="input-premium"
-                      value={formData.firstName}
-                      onChange={(e) => setFormData(prev => ({ ...prev, firstName: e.target.value }))}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="lastName">Last Name</Label>
-                    <Input
-                      id="lastName"
-                      className="input-premium"
-                      value={formData.lastName}
-                      onChange={(e) => setFormData(prev => ({ ...prev, lastName: e.target.value }))}
-                      required
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="fullName">Full Name</Label>
+                  <Input
+                    id="fullName"
+                    className="input-premium"
+                    value={formData.fullName}
+                    onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
+                    required
+                  />
                 </div>
 
                 {/* Bio */}

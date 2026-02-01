@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom"
 import { Users, Target, UserCheck } from "lucide-react"
 import { Navbar } from "@/components/Navbar"
 import { Card } from "@/components/ui/card"
+import { useAuth } from "@/hooks/useAuthHook"
 
 const roles = [
   {
@@ -35,9 +36,30 @@ const roles = [
 
 export default function ChooseRole() {
   const navigate = useNavigate()
+  const { user } = useAuth()
 
-  const handleRoleSelect = (route: string) => {
-    navigate(route)
+  const handleRoleSelect = async (route: string) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/auth/roles`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Include httpOnly cookies
+        body: JSON.stringify({ role: route.split('/').pop() }),
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Role selection failed');
+      }
+      
+      const userData = await response.json();
+      navigate(route)
+    } catch (error) {
+      console.error('Role selection failed:', error);
+      throw error;
+    }
   }
 
   return (

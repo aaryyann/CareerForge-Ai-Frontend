@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Navbar } from "@/components/Navbar"
 
 const mockMentees = [
   {
@@ -33,7 +34,8 @@ const mockMentees = [
 export default function MenteeMatches() {
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-6 py-8">
+      <Navbar />
+      <div className="container mx-auto px-6 py-8 pt-20">
         <div className="mb-8">
           <h1 className="text-3xl font-bold">Mentee Matches</h1>
           <p className="text-muted-foreground mt-2">Connect with mentees who match your expertise</p>

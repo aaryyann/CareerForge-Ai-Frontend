@@ -1,7 +1,9 @@
-import { useAuth } from "@/hooks/useAuth"
-import type { Database } from "@/integrations/supabase/types"
+import { useAuth } from "@/hooks/useAuthHook"
+import type { UserRole } from "@/types/auth"
 
-type UserRole = Database["public"]["Enums"]["user_role"]
+// ============================================================================
+// NAVIGATION CONFIGURATION
+// ============================================================================
 
 interface NavigationItem {
   name: string
@@ -13,13 +15,10 @@ interface NavigationItem {
 const navigationItems: NavigationItem[] = [
   // Job Seeker routes
   { name: "Dashboard", href: "/dashboard", roles: ["jobseeker"] },
-  { name: "Job Matches", href: "/job-matches", roles: ["jobseeker"] },
-  { name: "Profile", href: "/profile", roles: ["jobseeker"] },
   { name: "Upload Resume", href: "/upload-resume", roles: ["jobseeker"] },
   { name: "Mentor Match", href: "/mentor-match", roles: ["jobseeker"] },
   { name: "Role Suggest", href: "/role-suggest", roles: ["jobseeker"] },
   { name: "Roadmap", href: "/roadmap", roles: ["jobseeker"] },
-  { name: "AI Chat", href: "/ai-chat", roles: ["jobseeker", "mentor"] },
   
   // Recruiter routes
   { name: "Dashboard", href: "/recruiter-dashboard", roles: ["recruiter"] },
@@ -32,22 +31,27 @@ const navigationItems: NavigationItem[] = [
   { name: "Dashboard", href: "/mentor-dashboard", roles: ["mentor"] },
   { name: "Mentee Matches", href: "/mentee-matches", roles: ["mentor"] },
   { name: "Sessions", href: "/sessions", roles: ["mentor"] },
-  { name: "AI Chat", href: "/ai-chat", roles: ["jobseeker", "mentor"] },
   
-  // Common routes
+  // Common routes (shared across multiple roles)
+  { name: "Profile", href: "/profile", roles: ["jobseeker", "recruiter", "mentor"] },
+  { name: "AI Chat", href: "/ai-chat", roles: ["jobseeker", "mentor"] },
   { name: "Model Benchmarks", href: "/model-benchmarks", roles: ["jobseeker", "recruiter", "mentor"] },
   { name: "Voice Input", href: "/voice-input", roles: ["jobseeker", "mentor"] },
 ]
 
-export function useRoleBasedNavigation() {
+// ============================================================================
+// NAVIGATION HOOKS AND UTILITIES
+// ============================================================================
+
+export function useNavigation() {
   const { user } = useAuth()
   
-  if (!user?.profile) {
+  if (!user) {
     return []
   }
 
   return navigationItems.filter(item => 
-    item.roles.includes(user.profile!.role)
+    item.roles.includes(user.role)
   )
 }
 
@@ -64,7 +68,7 @@ export function getRoleDisplayName(role: UserRole): string {
   }
 }
 
-export function getRoleBasedDashboardRoute(role: UserRole): string {
+export function getDashboardRoute(role: UserRole): string {
   switch (role) {
     case "jobseeker":
       return "/dashboard"

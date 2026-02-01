@@ -73,7 +73,7 @@ export default function Dashboard() {
       <Navbar />
       
       <main className="pt-20 pb-12">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="w-full px-6 lg:px-8">
           {/* Header */}
           <div className="mb-8">
             <motion.h1
@@ -81,7 +81,7 @@ export default function Dashboard() {
               animate={{ opacity: 1, y: 0 }}
               className="text-4xl font-bold"
             >
-              Welcome back, <span className="hero-text">Alex</span>
+              Welcome back, <span className="hero-text">Aryan</span>
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 20 }}

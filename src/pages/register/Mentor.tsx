@@ -11,8 +11,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Navbar } from "@/components/Navbar"
-import { useAuth } from "@/hooks/useAuth"
-import { toast } from "@/hooks/use-toast"
+import { useAuth } from "@/hooks/useAuthHook"
+import { toast } from "sonner"
 
 const expertiseAreas = [
   "Software Engineering", "Product Management", "UI/UX Design", "Data Science",
@@ -58,34 +58,22 @@ export default function MentorRegister() {
     e.preventDefault()
     
     if (!formData.fullName || !formData.bio || !formData.mentoringExperience) {
-      toast({
-        title: "Error",
-        description: "Please fill in all required fields",
-        variant: "destructive"
-      })
+      toast.error("Please fill in all required fields")
       return
     }
 
     try {
-      const [firstName, ...lastNameParts] = formData.fullName.split(' ')
-      await completeProfile({
-        first_name: firstName,
-        last_name: lastNameParts.join(' ') || '',
-        role: "mentor",
-        bio: formData.bio
+      await completeProfile("mentor", {
+        fullName: formData.fullName,
+        bio: formData.bio,
+        expertise: selectedExpertise.join(","),
+        yearOfMentoring: formData.mentoringExperience
       })
       
-      toast({
-        title: "Success",
-        description: "Profile completed successfully!"
-      })
-      navigate("/mentor/sessions")
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to complete profile",
-        variant: "destructive"
-      })
+      toast.success("Profile completed successfully!")
+      navigate("/redirect")
+    } catch (error: unknown) {
+      toast.error((error as Error).message || "Failed to complete profile")
     }
   }
 

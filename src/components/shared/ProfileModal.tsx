@@ -1,25 +1,20 @@
 import { useState } from "react"
-import { User, X, Edit, LogOut } from "lucide-react"
+import { User as UserIcon, X, Edit, LogOut } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { useAuth } from "@/hooks/useAuthHook"
+import type { User } from "@/types/auth"
 
 interface ProfileModalProps {
   isOpen: boolean
   onClose: () => void
-  user: {
-    id: string
-    email: string
-    profile: {
-      first_name: string | null
-      last_name: string | null
-      bio: string | null
-      profile_picture: string | null
-    } | null
-  }
+  user: User
 }
 
 export function ProfileModal({ isOpen, onClose, user }: ProfileModalProps) {
+  const { signOut } = useAuth()
+  console.log(user)
   return (
     <AnimatePresence>
       {isOpen && (
@@ -88,9 +83,9 @@ export function ProfileModal({ isOpen, onClose, user }: ProfileModalProps) {
                 >
                   <div className="relative">
                     <Avatar className="h-28 w-28 ring-4 ring-primary/30 ring-offset-4 ring-offset-background hover:ring-primary/50 transition-all duration-300 hover:scale-105">
-                      <AvatarImage src={user.profile?.profile_picture || undefined} alt={`${user.profile?.first_name} ${user.profile?.last_name}`} className="object-cover" />
+                      <AvatarImage src={user.profile?.profilePicture || undefined} alt={user.profile?.fullName || 'Profile'} className="object-cover" />
                       <AvatarFallback className="bg-gradient-to-br from-primary/20 to-accent/20 text-primary text-2xl font-bold border border-primary/20">
-                        <User className="h-10 w-10" />
+                        {user.profile?.fullName ? user.profile.fullName.split(' ').map(n => n[0]).join('').toUpperCase() : <UserIcon className="h-10 w-10" />}
                       </AvatarFallback>
                     </Avatar>
                     {/* Glow Effect Behind Avatar */}
@@ -115,10 +110,7 @@ export function ProfileModal({ isOpen, onClose, user }: ProfileModalProps) {
                     whileHover={{ scale: 1.05 }}
                     transition={{ type: "spring", stiffness: 400, damping: 10 }}
                   >
-                    {user.profile?.first_name && user.profile?.last_name 
-                      ? `${user.profile.first_name} ${user.profile.last_name}`
-                      : user.email
-                    }
+                    {user.profile?.fullName || user.email}
                   </motion.h3>
                   
                   {/* Enhanced Email */}
@@ -181,6 +173,7 @@ export function ProfileModal({ isOpen, onClose, user }: ProfileModalProps) {
                       variant="ghost"
                       size="sm"
                       className="rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all duration-200 group"
+                      onClick={() => signOut()}
                     >
                       <LogOut className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform duration-200" />
                       Sign Out
