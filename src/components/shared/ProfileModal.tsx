@@ -1,9 +1,9 @@
-import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { User as UserIcon, X, Edit, LogOut } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import { useAuth } from "@/hooks/useAuthHook"
+import { useAuth } from "@/hooks/useAuth"
 import type { User } from "@/types/auth"
 
 interface ProfileModalProps {
@@ -14,7 +14,7 @@ interface ProfileModalProps {
 
 export function ProfileModal({ isOpen, onClose, user }: ProfileModalProps) {
   const { signOut } = useAuth()
-  console.log(user)
+  const navigate = useNavigate()
   return (
     <AnimatePresence>
       {isOpen && (
@@ -83,7 +83,7 @@ export function ProfileModal({ isOpen, onClose, user }: ProfileModalProps) {
                 >
                   <div className="relative">
                     <Avatar className="h-28 w-28 ring-4 ring-primary/30 ring-offset-4 ring-offset-background hover:ring-primary/50 transition-all duration-300 hover:scale-105">
-                      <AvatarImage src={user.profile?.profilePicture || undefined} alt={user.profile?.fullName || 'Profile'} className="object-cover" />
+                      <AvatarImage src={user.avatarUrl || undefined} alt={user.profile?.fullName || 'Profile'} className="object-cover" />
                       <AvatarFallback className="bg-gradient-to-br from-primary/20 to-accent/20 text-primary text-2xl font-bold border border-primary/20">
                         {user.profile?.fullName ? user.profile.fullName.split(' ').map(n => n[0]).join('').toUpperCase() : <UserIcon className="h-10 w-10" />}
                       </AvatarFallback>
@@ -158,6 +158,7 @@ export function ProfileModal({ isOpen, onClose, user }: ProfileModalProps) {
                       variant="outline"
                       size="sm"
                       className="rounded-xl border-border/50 hover:bg-accent/50 hover:border-primary/30 transition-all duration-200 backdrop-blur-sm group"
+                      onClick={() => { onClose(); navigate("/profile"); }}
                     >
                       <Edit className="h-4 w-4 mr-2 group-hover:rotate-12 transition-transform duration-200" />
                       Edit Profile

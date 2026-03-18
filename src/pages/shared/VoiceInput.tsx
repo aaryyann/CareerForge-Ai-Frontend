@@ -8,8 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
-import { Navbar } from "@/components/Navbar"
-import { Footer } from "@/components/Footer"
+import { Navbar } from "@/components/layout"
+import { Footer } from "@/components/layout"
 
 const quickPrompts = [
   "Help me prepare for a software engineer interview",
@@ -136,7 +136,7 @@ Would you like me to create a detailed roadmap with specific resources for each 
                       onClick={toggleListening}
                       className={`relative w-32 h-32 rounded-full flex items-center justify-center transition-all duration-300 ${
                         isListening 
-                          ? "bg-rose-500 animate-pulse-glow shadow-lg shadow-rose-500/50" 
+                          ? "bg-violet-500 animate-pulse-glow shadow-lg shadow-violet-500/50"
                           : "bg-primary hover:bg-primary/80 shadow-lg shadow-primary/25"
                       }`}
                     >

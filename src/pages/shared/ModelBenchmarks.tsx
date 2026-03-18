@@ -9,8 +9,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { Navbar } from "@/components/Navbar"
-import { Footer } from "@/components/Footer"
+import { Navbar } from "@/components/layout"
+import { Footer } from "@/components/layout"
 
 const modelPerformanceData = [
   {
@@ -161,7 +161,7 @@ export default function ModelBenchmarks() {
                         <span className="text-2xl font-bold text-primary">
                           {category.score}%
                         </span>
-                        <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-500">
+                        <Badge variant="secondary" className="bg-green-500/10 text-green-500">
                           {category.improvement}
                         </Badge>
                       </div>
@@ -215,9 +215,9 @@ export default function ModelBenchmarks() {
                             }}
                           />
                           <Legend />
-                          <Bar dataKey="accuracy" fill="#10b981" name="Accuracy %" />
-                          <Bar dataKey="speed" fill="#f59e0b" name="Speed %" />
-                          <Bar dataKey="satisfaction" fill="#ef4444" name="User Satisfaction %" />
+                          <Bar dataKey="accuracy" fill="#6366F1" name="Accuracy %" />
+                          <Bar dataKey="speed" fill="#818CF8" name="Speed %" />
+                          <Bar dataKey="satisfaction" fill="#A78BFA" name="User Satisfaction %" />
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
@@ -263,19 +263,19 @@ export default function ModelBenchmarks() {
                           <div className="grid grid-cols-3 gap-6">
                             <div>
                               <div className="text-sm text-muted-foreground">Accuracy</div>
-                              <div className="text-xl font-semibold text-emerald-500">
+                              <div className="text-xl font-semibold text-green-500">
                                 {model.accuracy}%
                               </div>
                             </div>
                             <div>
                               <div className="text-sm text-muted-foreground">Speed</div>
-                              <div className="text-xl font-semibold text-amber-500">
+                              <div className="text-xl font-semibold text-cyan-500">
                                 {model.speed}%
                               </div>
                             </div>
                             <div>
                               <div className="text-sm text-muted-foreground">User Satisfaction</div>
-                              <div className="text-xl font-semibold text-rose-500">
+                              <div className="text-xl font-semibold text-violet-500">
                                 {model.satisfaction}%
                               </div>
                             </div>
@@ -320,21 +320,21 @@ export default function ModelBenchmarks() {
                           <Line 
                             type="monotone" 
                             dataKey="careerforge" 
-                            stroke="#10b981" 
+                            stroke="#6366F1"
                             strokeWidth={3}
-                            name="CareerForge AI" 
+                            name="CareerForge AI"
                           />
-                          <Line 
-                            type="monotone" 
-                            dataKey="competitor_a" 
-                            stroke="#f59e0b" 
+                          <Line
+                            type="monotone"
+                            dataKey="competitor_a"
+                            stroke="#818CF8"
                             strokeWidth={2}
-                            name="Competitor A" 
+                            name="Competitor A"
                           />
-                          <Line 
-                            type="monotone" 
-                            dataKey="competitor_b" 
-                            stroke="#ef4444" 
+                          <Line
+                            type="monotone"
+                            dataKey="competitor_b"
+                            stroke="#A78BFA"
                             strokeWidth={2}
                             name="Competitor B" 
                           />
@@ -359,7 +359,7 @@ export default function ModelBenchmarks() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="space-y-4">
                         <div className="flex items-start space-x-3">
-                          <TrendingUp className="h-5 w-5 text-emerald-500 mt-0.5" />
+                          <TrendingUp className="h-5 w-5 text-green-500 mt-0.5" />
                           <div>
                             <h4 className="font-medium">Consistent Improvement</h4>
                             <p className="text-sm text-muted-foreground">
@@ -381,7 +381,7 @@ export default function ModelBenchmarks() {
                       </div>
                       <div className="space-y-4">
                         <div className="flex items-start space-x-3">
-                          <Zap className="h-5 w-5 text-amber-500 mt-0.5" />
+                          <Zap className="h-5 w-5 text-cyan-500 mt-0.5" />
                           <div>
                             <h4 className="font-medium">Superior Speed</h4>
                             <p className="text-sm text-muted-foreground">
@@ -391,7 +391,7 @@ export default function ModelBenchmarks() {
                           </div>
                         </div>
                         <div className="flex items-start space-x-3">
-                          <Award className="h-5 w-5 text-rose-500 mt-0.5" />
+                          <Award className="h-5 w-5 text-violet-500 mt-0.5" />
                           <div>
                             <h4 className="font-medium">User Satisfaction</h4>
                             <p className="text-sm text-muted-foreground">

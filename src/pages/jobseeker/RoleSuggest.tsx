@@ -9,8 +9,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Navbar } from "@/components/Navbar"
-import { Footer } from "@/components/Footer"
+import { Navbar } from "@/components/layout"
+import { Footer } from "@/components/layout"
 
 const rolesSuggestions = [
   {
@@ -242,10 +242,10 @@ export default function RoleSuggest() {
                           </div>
                           
                           <div className="flex items-center space-x-4 mb-4">
-                            <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-500">
+                            <Badge variant="secondary" className="bg-green-500/10 text-green-500">
                               {role.type}
                             </Badge>
-                            <div className="flex items-center space-x-1 text-lg font-semibold text-emerald-500">
+                            <div className="flex items-center space-x-1 text-lg font-semibold text-green-500">
                               <DollarSign className="h-4 w-4" />
                               <span>{role.salary}</span>
                             </div>
@@ -288,7 +288,7 @@ export default function RoleSuggest() {
                             {role.requiredSkills.map((skill) => (
                               <Badge
                                 key={skill}
-                                className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                                className="bg-green-500/10 text-green-500 border-green-500/20"
                               >
                                 {skill}
                               </Badge>
@@ -298,13 +298,13 @@ export default function RoleSuggest() {
 
                         {role.missingSkills.length > 0 && (
                           <div>
-                            <h4 className="font-medium mb-2 text-amber-500">Skills to Develop</h4>
+                            <h4 className="font-medium mb-2 text-cyan-500">Skills to Develop</h4>
                             <div className="flex flex-wrap gap-2">
                               {role.missingSkills.map((skill) => (
                                 <Badge
                                   key={skill}
                                   variant="outline"
-                                  className="border-amber-500/50 text-amber-500"
+                                  className="border-cyan-500/50 text-cyan-500"
                                 >
                                   {skill}
                                 </Badge>

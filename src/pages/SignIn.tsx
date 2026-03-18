@@ -8,8 +8,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Navbar } from "@/components/Navbar"
-import { useAuth } from "@/hooks/useAuthHook"
+import { Navbar } from "@/components/layout"
+import { useAuth } from "@/hooks/useAuth"
 import { toast } from "sonner"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
@@ -47,8 +47,13 @@ export default function SignIn() {
       })
       toast.success("Successfully signed in!")
       navigate("/redirect")
-    } catch (error: Error | unknown) {
-      toast.error((error as Error).message || "Failed to sign in")
+    } catch (error: any) {
+      if (error.code === "EMAIL_NOT_VERIFIED") {
+        toast.error("Please verify your email before signing in")
+        navigate("/check-email", { state: { email: data.email } })
+        return
+      }
+      toast.error(error.message || "Failed to sign in")
     } finally {
       setIsLoading(false)
     }

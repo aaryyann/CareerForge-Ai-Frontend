@@ -1,4 +1,4 @@
-import { useAuth } from "@/hooks/useAuthHook";
+import { useAuth } from "@/hooks/useAuth";
 import { getDashboardRoute, shouldRedirectToDashboard, getRedirectRoute } from "@/utils/authNavigation";
 
 // ============================================================================

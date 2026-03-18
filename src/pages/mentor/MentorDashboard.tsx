@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { Navbar } from "@/components/Navbar"
+import { Navbar } from "@/components/layout"
 
 export default function MentorDashboard() {
   const [stats] = useState({
@@ -86,7 +86,7 @@ export default function MentorDashboard() {
               <CardContent>
                 <div className="flex items-center justify-between">
                   <span className="text-2xl font-bold">{stats.avgRating}</span>
-                  <Star className="h-5 w-5 text-amber-500" />
+                  <Star className="h-5 w-5 text-cyan-500" />
                 </div>
               </CardContent>
             </Card>
@@ -98,7 +98,7 @@ export default function MentorDashboard() {
               <CardContent>
                 <div className="flex items-center justify-between">
                   <span className="text-2xl font-bold">{stats.hoursThisMonth}h</span>
-                  <Clock className="h-5 w-5 text-emerald-500" />
+                  <Clock className="h-5 w-5 text-green-500" />
                 </div>
               </CardContent>
             </Card>

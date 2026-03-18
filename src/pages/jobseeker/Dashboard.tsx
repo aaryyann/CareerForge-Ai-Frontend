@@ -6,8 +6,8 @@ import { BarChart3, Users, Target, TrendingUp, Star, CheckCircle } from "lucide-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
-import { Navbar } from "@/components/Navbar"
-import { Footer } from "@/components/Footer"
+import { Navbar } from "@/components/layout"
+import { Footer } from "@/components/layout"
 
 const stats = [
   {
@@ -114,8 +114,8 @@ export default function Dashboard() {
                           <p className="text-2xl font-semibold">{stat.value}</p>
                           <p className={`ml-2 text-sm font-medium ${
                             stat.changeType === 'positive' 
-                              ? 'text-emerald-500' 
-                              : 'text-rose-500'
+                              ? 'text-green-500' 
+                              : 'text-destructive'
                           }`}>
                             {stat.change}
                           </p>
@@ -156,26 +156,26 @@ export default function Dashboard() {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between p-3 rounded-lg bg-muted/20 border border-border/30">
                       <div className="flex items-center space-x-3">
-                        <CheckCircle className="h-5 w-5 text-emerald-500" />
+                        <CheckCircle className="h-5 w-5 text-green-500" />
                         <span className="text-sm">Professional Summary</span>
                       </div>
-                      <span className="text-xs text-emerald-500 font-medium">Complete</span>
+                      <span className="text-xs text-green-500 font-medium">Complete</span>
                     </div>
                     
                     <div className="flex items-center justify-between p-3 rounded-lg bg-muted/20 border border-border/30">
                       <div className="flex items-center space-x-3">
-                        <CheckCircle className="h-5 w-5 text-emerald-500" />
+                        <CheckCircle className="h-5 w-5 text-green-500" />
                         <span className="text-sm">Skills & Experience</span>
                       </div>
-                      <span className="text-xs text-emerald-500 font-medium">Complete</span>
+                      <span className="text-xs text-green-500 font-medium">Complete</span>
                     </div>
                     
-                    <div className="flex items-center justify-between p-3 rounded-lg bg-amber-500/10 border border-amber-500/30">
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/30">
                       <div className="flex items-center space-x-3">
-                        <div className="h-5 w-5 rounded-full border-2 border-amber-500"></div>
+                        <div className="h-5 w-5 rounded-full border-2 border-cyan-500"></div>
                         <span className="text-sm">Career Preferences</span>
                       </div>
-                      <span className="text-xs text-amber-500 font-medium">15% left</span>
+                      <span className="text-xs text-cyan-500 font-medium">15% left</span>
                     </div>
                   </div>
                   

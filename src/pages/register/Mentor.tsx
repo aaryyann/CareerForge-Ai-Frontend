@@ -3,84 +3,92 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { useNavigate, Link } from "react-router-dom"
-import { Upload, ArrowLeft, CheckCircle, User } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Navbar } from "@/components/Navbar"
-import { useAuth } from "@/hooks/useAuthHook"
+import { Navbar } from "@/components/layout"
+import { useAuth } from "@/hooks/useAuth"
 import { toast } from "sonner"
+import { indianCities } from "@/constants/locations"
 
-const expertiseAreas = [
+const expertiseOptions = [
   "Software Engineering", "Product Management", "UI/UX Design", "Data Science",
-  "Marketing", "Sales", "Finance", "HR & Recruiting", "Entrepreneurship", "Leadership"
-]
-
-const availabilityOptions = [
-  "Part-time (5-10 hours/week)",
-  "Full-time (20+ hours/week)", 
-  "Weekends only",
-  "Flexible schedule"
+  "Machine Learning", "Cloud & DevOps", "Cybersecurity", "Marketing",
+  "Sales", "Finance", "HR & Recruiting", "Entrepreneurship", "Leadership",
 ]
 
 export default function MentorRegister() {
   const navigate = useNavigate()
   const { completeProfile, user } = useAuth()
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [selectedExpertise, setSelectedExpertise] = useState<string[]>([])
   const [formData, setFormData] = useState({
     fullName: "",
-    mentoringExperience: "",
-    availability: "",
-    profilePicture: null as File | null,
-    bio: ""
+    title: "",
+    company: "",
+    yearsOfExp: "",
+    phone: "",
+    location: "",
+    linkedinUrl: "",
+    pricePerSession: "",
   })
 
+  const update = (field: string, value: string) =>
+    setFormData(prev => ({ ...prev, [field]: value }))
 
   const handleExpertiseToggle = (area: string) => {
-    setSelectedExpertise(prev => 
-      prev.includes(area) 
+    setSelectedExpertise(prev =>
+      prev.includes(area)
         ? prev.filter(a => a !== area)
         : [...prev, area]
     )
   }
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      setFormData(prev => ({ ...prev, profilePicture: file }))
-    }
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
-    if (!formData.fullName || !formData.bio || !formData.mentoringExperience) {
-      toast.error("Please fill in all required fields")
+
+    if (!formData.fullName.trim()) {
+      toast.error("Full name is required")
+      return
+    }
+    if (selectedExpertise.length === 0) {
+      toast.error("Please select at least one expertise area")
+      return
+    }
+    if (!formData.yearsOfExp) {
+      toast.error("Years of experience is required")
       return
     }
 
     try {
+      setIsSubmitting(true)
       await completeProfile("mentor", {
-        fullName: formData.fullName,
-        bio: formData.bio,
-        expertise: selectedExpertise.join(","),
-        yearOfMentoring: formData.mentoringExperience
+        fullName: formData.fullName.trim(),
+        title: formData.title || undefined,
+        company: formData.company || undefined,
+        yearsOfExp: Number(formData.yearsOfExp),
+        expertiseAreas: selectedExpertise,
+        phone: formData.phone || undefined,
+        linkedinUrl: formData.linkedinUrl || undefined,
+        pricePerSession: formData.pricePerSession || undefined,
       })
-      
+
       toast.success("Profile completed successfully!")
       navigate("/redirect")
     } catch (error: unknown) {
       toast.error((error as Error).message || "Failed to complete profile")
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
   return (
     <div className="min-h-screen bg-hero-gradient">
       <Navbar />
-      
+
       <div className="flex min-h-screen items-center justify-center px-6 py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -100,73 +108,124 @@ export default function MentorRegister() {
 
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Welcome Message */}
                 <div className="text-center p-4 bg-primary/10 rounded-lg">
                   <p className="text-sm text-muted-foreground">
-                    Welcome, {user?.email}! Let's complete your mentor profile.
+                    Welcome, {user?.email}! Fields marked with * are required.
                   </p>
                 </div>
 
-                {/* Personal Information */}
+                {/* Full Name */}
                 <div className="space-y-2">
-                  <Label htmlFor="fullName">Full Name</Label>
+                  <Label htmlFor="fullName">Full Name *</Label>
                   <Input
                     id="fullName"
                     className="input-premium"
+                    placeholder="John Doe"
                     value={formData.fullName}
-                    onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
+                    onChange={e => update("fullName", e.target.value)}
                     required
                   />
                 </div>
 
-                {/* Bio */}
-                <div className="space-y-2">
-                  <Label htmlFor="bio">Bio</Label>
-                  <Textarea
-                    id="bio"
-                    className="input-premium min-h-[100px]"
-                    placeholder="Tell us about your background, expertise, and what you can help mentees with..."
-                    value={formData.bio}
-                    onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
-                    required
-                  />
-                </div>
-
-                {/* Profile Picture Upload */}
-                <div className="space-y-2">
-                  <Label>Profile Picture</Label>
-                  <div className="border-2 border-dashed border-border/50 rounded-lg p-6 text-center hover:border-primary/50 transition-colors">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileUpload}
-                      className="hidden"
-                      id="profile-upload"
+                {/* Title + Company */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="title">Title</Label>
+                    <Input
+                      id="title"
+                      className="input-premium"
+                      placeholder="e.g. Senior Engineer"
+                      value={formData.title}
+                      onChange={e => update("title", e.target.value)}
                     />
-                    <label htmlFor="profile-upload" className="cursor-pointer">
-                      {formData.profilePicture ? (
-                        <div className="flex items-center justify-center space-x-2 text-emerald-400">
-                          <CheckCircle className="h-5 w-5" />
-                          <span>{formData.profilePicture.name}</span>
-                        </div>
-                      ) : (
-                        <div className="space-y-2">
-                          <User className="h-8 w-8 mx-auto text-muted-foreground" />
-                          <p className="text-sm text-muted-foreground">
-                            Click to upload your profile picture
-                          </p>
-                          <p className="text-xs text-muted-foreground">JPG, PNG, or GIF (max 2MB)</p>
-                        </div>
-                      )}
-                    </label>
                   </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="company">Company</Label>
+                    <Input
+                      id="company"
+                      className="input-premium"
+                      placeholder="e.g. Google"
+                      value={formData.company}
+                      onChange={e => update("company", e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* Years of Exp + Price per Session */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="yearsOfExp">Years of Experience *</Label>
+                    <Input
+                      id="yearsOfExp"
+                      type="number"
+                      min="0"
+                      max="50"
+                      className="input-premium"
+                      placeholder="e.g. 5"
+                      value={formData.yearsOfExp}
+                      onChange={e => update("yearsOfExp", e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="pricePerSession">Price per Session</Label>
+                    <Input
+                      id="pricePerSession"
+                      type="number"
+                      min="0"
+                      className="input-premium"
+                      placeholder="e.g. 500"
+                      value={formData.pricePerSession}
+                      onChange={e => update("pricePerSession", e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* Phone + Location */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone</Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      className="input-premium"
+                      placeholder="+91 98765 43210"
+                      value={formData.phone}
+                      onChange={e => update("phone", e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Location</Label>
+                    <Select value={formData.location} onValueChange={v => update("location", v)}>
+                      <SelectTrigger className="input-premium">
+                        <SelectValue placeholder="Select city" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {indianCities.map(city => (
+                          <SelectItem key={city} value={city}>{city}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* LinkedIn */}
+                <div className="space-y-2">
+                  <Label htmlFor="linkedinUrl">LinkedIn URL</Label>
+                  <Input
+                    id="linkedinUrl"
+                    className="input-premium"
+                    placeholder="https://linkedin.com/in/..."
+                    value={formData.linkedinUrl}
+                    onChange={e => update("linkedinUrl", e.target.value)}
+                  />
                 </div>
 
                 {/* Expertise Areas */}
                 <div className="space-y-3">
-                  <Label>Expertise Areas (Select all that apply)</Label>
+                  <Label>Expertise Areas * (Select all that apply)</Label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                    {expertiseAreas.map((area) => (
+                    {expertiseOptions.map(area => (
                       <motion.button
                         key={area}
                         type="button"
@@ -185,46 +244,14 @@ export default function MentorRegister() {
                   </div>
                 </div>
 
-                {/* Mentoring Experience */}
-                <div className="space-y-2">
-                  <Label htmlFor="mentoringExperience">Years of Mentoring Experience</Label>
-                  <Input
-                    id="mentoringExperience"
-                    type="number"
-                    min="0"
-                    className="input-premium"
-                    placeholder="e.g. 3"
-                    value={formData.mentoringExperience}
-                    onChange={(e) => setFormData(prev => ({ ...prev, mentoringExperience: e.target.value }))}
-                    required
-                  />
-                </div>
-
-                {/* Availability */}
-                <div className="space-y-2">
-                  <Label>Availability</Label>
-                  <Select value={formData.availability} onValueChange={(value) => setFormData(prev => ({ ...prev, availability: value }))}>
-                    <SelectTrigger className="input-premium">
-                      <SelectValue placeholder="Select your availability" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availabilityOptions.map((option) => (
-                        <SelectItem key={option} value={option}>
-                          {option}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <Button type="submit" className="w-full btn-hero">
-                  Complete Profile
+                <Button type="submit" className="w-full btn-hero" disabled={isSubmitting}>
+                  {isSubmitting ? "Saving..." : "Complete Profile"}
                 </Button>
               </form>
 
               <div className="mt-6 text-center">
-                <Link 
-                  to="/choose-role" 
+                <Link
+                  to="/choose-role"
                   className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />

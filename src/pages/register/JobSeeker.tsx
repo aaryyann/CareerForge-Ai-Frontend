@@ -3,83 +3,97 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { useNavigate, Link } from "react-router-dom"
-import { Upload, ArrowLeft, CheckCircle } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Navbar } from "@/components/Navbar"
-import { useAuth } from "@/hooks/useAuthHook"
+import { Switch } from "@/components/ui/switch"
+import { Navbar } from "@/components/layout"
+import { useAuth } from "@/hooks/useAuth"
 import { toast } from "sonner"
+import { indianCities } from "@/constants/locations"
 
-const experienceOptions = [
-  "0-1 years", "1-3 years", "3-5 years", "5-10 years", "10+ years"
+const experienceLevels = [
+  { value: "entry", label: "Entry Level (0-1 years)" },
+  { value: "junior", label: "Junior (1-3 years)" },
+  { value: "mid", label: "Mid Level (3-5 years)" },
+  { value: "senior", label: "Senior (5-10 years)" },
+  { value: "lead", label: "Lead / Staff (10+ years)" },
 ]
 
-const roleOptions = [
-  "Software Engineer", "Product Manager", "Designer", "Data Scientist", 
-  "Marketing Manager", "Sales Representative", "HR Manager", "Other"
+const workTypes = [
+  { value: "remote", label: "Remote" },
+  { value: "hybrid", label: "Hybrid" },
+  { value: "onsite", label: "On-site" },
 ]
 
 export default function JobSeekerRegister() {
   const navigate = useNavigate()
   const { completeProfile, user } = useAuth()
-  const [selectedRoles, setSelectedRoles] = useState<string[]>([])
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [formData, setFormData] = useState({
     fullName: "",
     bio: "",
-    experience: "",
-    resume: null as File | null
+    yearOfExp: "",
+    currentTitle: "",
+    experienceLevel: "",
+    rolePreference: "",
+    linkedinUrl: "",
+    githubUrl: "",
+    phone: "",
+    claimedLocation: "",
+    workTypePref: "" as "" | "remote" | "hybrid" | "onsite",
+    salaryExpMin: "",
+    salaryExpMax: "",
+    willingToRelocate: false,
   })
 
-  const handleRoleToggle = (role: string) => {
-    setSelectedRoles(prev => 
-      prev.includes(role) 
-        ? prev.filter(r => r !== role)
-        : [...prev, role]
-    )
-  }
-
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      setFormData(prev => ({ ...prev, resume: file }))
-    }
-  }
+  const update = (field: string, value: string | boolean) =>
+    setFormData(prev => ({ ...prev, [field]: value }))
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
-    if (!formData.fullName || !formData.bio) {
-      toast.error("Please fill in all required fields")
+
+    if (!formData.fullName.trim()) {
+      toast.error("Full name is required")
       return
     }
 
     try {
-      console.log("Form data:", formData)
-      console.log("Selected roles:", selectedRoles)
-      console.log("Calling completeProfile...")
-      
-      await completeProfile("jobseeker", {
-        fullName: formData.fullName,
-        bio: formData.bio,
-        preferredRoles: selectedRoles,
-        yearOfExperience: formData.experience
+      setIsSubmitting(true)
+      await completeProfile("job_seeker", {
+        fullName: formData.fullName.trim(),
+        bio: formData.bio || undefined,
+        yearOfExp: formData.yearOfExp ? Number(formData.yearOfExp) : undefined,
+        currentTitle: formData.currentTitle || undefined,
+        experienceLevel: formData.experienceLevel || undefined,
+        rolePreference: formData.rolePreference || undefined,
+        linkedinUrl: formData.linkedinUrl || undefined,
+        githubUrl: formData.githubUrl || undefined,
+        phone: formData.phone || undefined,
+        claimedLocation: formData.claimedLocation || undefined,
+        workTypePref: formData.workTypePref || undefined,
+        salaryExpMin: formData.salaryExpMin || undefined,
+        salaryExpMax: formData.salaryExpMax || undefined,
+        willingToRelocate: formData.willingToRelocate,
       })
-      
+
       toast.success("Profile completed successfully!")
       navigate("/redirect")
     } catch (error: unknown) {
       toast.error((error as Error).message || "Failed to complete profile")
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
   return (
     <div className="min-h-screen bg-hero-gradient">
       <Navbar />
-      
+
       <div className="flex min-h-screen items-center justify-center px-6 py-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -99,21 +113,21 @@ export default function JobSeekerRegister() {
 
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Welcome Message */}
                 <div className="text-center p-4 bg-primary/10 rounded-lg">
                   <p className="text-sm text-muted-foreground">
-                    Welcome, {user?.email}! Let's complete your job seeker profile.
+                    Welcome, {user?.email}! Fields marked with * are required.
                   </p>
                 </div>
 
-                {/* Personal Information */}
+                {/* Full Name */}
                 <div className="space-y-2">
-                  <Label htmlFor="fullName">Full Name</Label>
+                  <Label htmlFor="fullName">Full Name *</Label>
                   <Input
                     id="fullName"
                     className="input-premium"
+                    placeholder="John Doe"
                     value={formData.fullName}
-                    onChange={(e) => setFormData(prev => ({ ...prev, fullName: e.target.value }))}
+                    onChange={e => update("fullName", e.target.value)}
                     required
                   />
                 </div>
@@ -126,89 +140,179 @@ export default function JobSeekerRegister() {
                     className="input-premium min-h-[100px]"
                     placeholder="Tell us about yourself, your career goals, and what you're looking for..."
                     value={formData.bio}
-                    onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
-                    required
+                    onChange={e => update("bio", e.target.value)}
                   />
                 </div>
 
-                {/* Resume Upload */}
-                <div className="space-y-2">
-                  <Label>Upload Resume</Label>
-                  <div className="border-2 border-dashed border-border/50 rounded-lg p-6 text-center hover:border-primary/50 transition-colors">
-                    <input
-                      type="file"
-                      accept=".pdf,.doc,.docx"
-                      onChange={handleFileUpload}
-                      className="hidden"
-                      id="resume-upload"
+                {/* Current Title + Experience Level */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="currentTitle">Current Title</Label>
+                    <Input
+                      id="currentTitle"
+                      className="input-premium"
+                      placeholder="e.g. Software Engineer"
+                      value={formData.currentTitle}
+                      onChange={e => update("currentTitle", e.target.value)}
                     />
-                    <label htmlFor="resume-upload" className="cursor-pointer">
-                      {formData.resume ? (
-                        <div className="flex items-center justify-center space-x-2 text-emerald-400">
-                          <CheckCircle className="h-5 w-5" />
-                          <span>{formData.resume.name}</span>
-                        </div>
-                      ) : (
-                        <div className="space-y-2">
-                          <Upload className="h-8 w-8 mx-auto text-muted-foreground" />
-                          <p className="text-sm text-muted-foreground">
-                            Click to upload or drag and drop your resume
-                          </p>
-                          <p className="text-xs text-muted-foreground">PDF, DOC, or DOCX (max 5MB)</p>
-                        </div>
-                      )}
-                    </label>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Experience Level</Label>
+                    <Select value={formData.experienceLevel} onValueChange={v => update("experienceLevel", v)}>
+                      <SelectTrigger className="input-premium">
+                        <SelectValue placeholder="Select level" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {experienceLevels.map(opt => (
+                          <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 
-                {/* Experience Level */}
+                {/* Years of Exp + Role Preference */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="yearOfExp">Years of Experience</Label>
+                    <Input
+                      id="yearOfExp"
+                      type="number"
+                      min="0"
+                      max="50"
+                      className="input-premium"
+                      placeholder="e.g. 3"
+                      value={formData.yearOfExp}
+                      onChange={e => update("yearOfExp", e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="rolePreference">Preferred Role</Label>
+                    <Input
+                      id="rolePreference"
+                      className="input-premium"
+                      placeholder="e.g. Frontend Developer"
+                      value={formData.rolePreference}
+                      onChange={e => update("rolePreference", e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* Phone + Location */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone</Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      className="input-premium"
+                      placeholder="+91 98765 43210"
+                      value={formData.phone}
+                      onChange={e => update("phone", e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Location</Label>
+                    <Select value={formData.claimedLocation} onValueChange={v => update("claimedLocation", v)}>
+                      <SelectTrigger className="input-premium">
+                        <SelectValue placeholder="Select city" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {indianCities.map(city => (
+                          <SelectItem key={city} value={city}>{city}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* LinkedIn + GitHub */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="linkedinUrl">LinkedIn URL</Label>
+                    <Input
+                      id="linkedinUrl"
+                      className="input-premium"
+                      placeholder="https://linkedin.com/in/..."
+                      value={formData.linkedinUrl}
+                      onChange={e => update("linkedinUrl", e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="githubUrl">GitHub URL</Label>
+                    <Input
+                      id="githubUrl"
+                      className="input-premium"
+                      placeholder="https://github.com/..."
+                      value={formData.githubUrl}
+                      onChange={e => update("githubUrl", e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* Work Preference */}
                 <div className="space-y-2">
-                  <Label>Years of Experience</Label>
-                  <Select value={formData.experience} onValueChange={(value) => setFormData(prev => ({ ...prev, experience: value }))}>
+                  <Label>Work Type Preference</Label>
+                  <Select value={formData.workTypePref} onValueChange={v => update("workTypePref", v)}>
                     <SelectTrigger className="input-premium">
-                      <SelectValue placeholder="Select your experience level" />
+                      <SelectValue placeholder="Select work type" />
                     </SelectTrigger>
                     <SelectContent>
-                      {experienceOptions.map((option) => (
-                        <SelectItem key={option} value={option}>
-                          {option}
-                        </SelectItem>
+                      {workTypes.map(opt => (
+                        <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
 
-                {/* Preferred Roles */}
-                <div className="space-y-3">
-                  <Label>Preferred Roles (Select all that apply)</Label>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                    {roleOptions.map((role) => (
-                      <motion.button
-                        key={role}
-                        type="button"
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => handleRoleToggle(role)}
-                        className={`p-3 rounded-lg border text-sm font-medium transition-all ${
-                          selectedRoles.includes(role)
-                            ? "bg-primary/20 border-primary text-primary"
-                            : "bg-secondary border-border hover:border-primary/50"
-                        }`}
-                      >
-                        {role}
-                      </motion.button>
-                    ))}
+                {/* Salary Expectation */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="salaryExpMin">Min Salary Expectation</Label>
+                    <Input
+                      id="salaryExpMin"
+                      type="number"
+                      min="0"
+                      className="input-premium"
+                      placeholder="e.g. 600000"
+                      value={formData.salaryExpMin}
+                      onChange={e => update("salaryExpMin", e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="salaryExpMax">Max Salary Expectation</Label>
+                    <Input
+                      id="salaryExpMax"
+                      type="number"
+                      min="0"
+                      className="input-premium"
+                      placeholder="e.g. 1200000"
+                      value={formData.salaryExpMax}
+                      onChange={e => update("salaryExpMax", e.target.value)}
+                    />
                   </div>
                 </div>
 
-                <Button type="submit" className="w-full btn-hero">
-                  Complete Profile
+                {/* Willing to Relocate */}
+                <div className="flex items-center justify-between p-4 bg-secondary/20 rounded-lg border border-border/30">
+                  <Label htmlFor="willingToRelocate" className="cursor-pointer">
+                    Willing to Relocate
+                  </Label>
+                  <Switch
+                    id="willingToRelocate"
+                    checked={formData.willingToRelocate}
+                    onCheckedChange={v => update("willingToRelocate", v)}
+                  />
+                </div>
+
+                <Button type="submit" className="w-full btn-hero" disabled={isSubmitting}>
+                  {isSubmitting ? "Saving..." : "Complete Profile"}
                 </Button>
               </form>
 
               <div className="mt-6 text-center">
-                <Link 
-                  to="/choose-role" 
+                <Link
+                  to="/choose-role"
                   className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />

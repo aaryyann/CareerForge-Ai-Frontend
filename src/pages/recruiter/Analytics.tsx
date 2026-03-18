@@ -8,8 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Navbar } from "@/components/Navbar"
-import { Footer } from "@/components/Footer"
+import { Navbar } from "@/components/layout"
+import { Footer } from "@/components/layout"
 
 const skillProgressData = [
   { skill: "React", current: 85, target: 95, growth: 15 },
@@ -29,11 +29,11 @@ const careerGrowthData = [
 ]
 
 const industryMatchData = [
-  { name: "Technology", value: 45, color: "#10b981" },
-  { name: "Finance", value: 25, color: "#f59e0b" },
-  { name: "Healthcare", value: 15, color: "#ef4444" },
-  { name: "Education", value: 10, color: "#8b5cf6" },
-  { name: "Other", value: 5, color: "#6b7280" },
+  { name: "Technology", value: 45, color: "#6366F1" },
+  { name: "Finance", value: 25, color: "#818CF8" },
+  { name: "Healthcare", value: 15, color: "#A78BFA" },
+  { name: "Education", value: 10, color: "#93C5FD" },
+  { name: "Other", value: 5, color: "#64748B" },
 ]
 
 const monthlyEngagementData = [
@@ -141,9 +141,9 @@ export default function Analytics() {
                         <div className="flex items-baseline">
                           <p className="text-2xl font-semibold">{stat.value}</p>
                           <p className={`ml-2 text-sm font-medium ${
-                            stat.changeType === 'positive' 
-                              ? 'text-emerald-500' 
-                              : 'text-rose-500'
+                            stat.changeType === 'positive'
+                              ? 'text-green-500'
+                              : 'text-destructive'
                           }`}>
                             {stat.change}
                           </p>
@@ -193,10 +193,10 @@ export default function Analytics() {
                             }}
                           />
                           <Legend />
-                          <Line type="monotone" dataKey="applications" stroke="#10b981" strokeWidth={2} name="Applications" />
-                          <Line type="monotone" dataKey="interviews" stroke="#f59e0b" strokeWidth={2} name="Interviews" />
-                          <Line type="monotone" dataKey="offers" stroke="#ef4444" strokeWidth={2} name="Offers" />
-                          <Line type="monotone" dataKey="mentorSessions" stroke="#8b5cf6" strokeWidth={2} name="Mentor Sessions" />
+                          <Line type="monotone" dataKey="applications" stroke="#6366F1" strokeWidth={2} name="Applications" />
+                          <Line type="monotone" dataKey="interviews" stroke="#818CF8" strokeWidth={2} name="Interviews" />
+                          <Line type="monotone" dataKey="offers" stroke="#A78BFA" strokeWidth={2} name="Offers" />
+                          <Line type="monotone" dataKey="mentorSessions" stroke="#93C5FD" strokeWidth={2} name="Mentor Sessions" />
                         </LineChart>
                       </ResponsiveContainer>
                     </div>
@@ -226,7 +226,7 @@ export default function Analytics() {
                             cx="50%"
                             cy="50%"
                             outerRadius={100}
-                            fill="#8884d8"
+                            fill="#818CF8"
                             dataKey="value"
                             label={(entry) => `${entry.name}: ${entry.value}%`}
                           >
@@ -278,8 +278,8 @@ export default function Analytics() {
                             }}
                           />
                           <Legend />
-                          <Bar dataKey="current" fill="#10b981" name="Current Level" />
-                          <Bar dataKey="target" fill="#f59e0b" name="Target Level" />
+                          <Bar dataKey="current" fill="#6366F1" name="Current Level" />
+                          <Bar dataKey="target" fill="#818CF8" name="Target Level" />
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
@@ -311,7 +311,7 @@ export default function Analytics() {
                             </div>
                           </div>
                           <div className="text-right">
-                            <div className="text-lg font-semibold text-amber-500">
+                            <div className="text-lg font-semibold text-cyan-500">
                               +{skill.growth}%
                             </div>
                             <div className="text-xs text-muted-foreground">Growth Potential</div>
@@ -353,9 +353,9 @@ export default function Analytics() {
                             }}
                           />
                           <Legend />
-                          <Bar dataKey="profileViews" fill="#10b981" name="Profile Views" />
-                          <Bar dataKey="mentorConnections" fill="#f59e0b" name="Mentor Connections" />
-                          <Bar dataKey="skillAssessments" fill="#8b5cf6" name="Skill Assessments" />
+                          <Bar dataKey="profileViews" fill="#6366F1" name="Profile Views" />
+                          <Bar dataKey="mentorConnections" fill="#818CF8" name="Mentor Connections" />
+                          <Bar dataKey="skillAssessments" fill="#93C5FD" name="Skill Assessments" />
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
@@ -380,18 +380,18 @@ export default function Analytics() {
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                      <div className="text-center p-6 rounded-lg bg-emerald-500/5 border border-emerald-500/20">
-                        <div className="text-3xl font-bold text-emerald-500 mb-2">92%</div>
+                      <div className="text-center p-6 rounded-lg bg-green-500/5 border border-green-500/20">
+                        <div className="text-3xl font-bold text-green-500 mb-2">92%</div>
                         <div className="font-medium">Job Match Accuracy</div>
                         <div className="text-sm text-muted-foreground">+5% from last month</div>
                       </div>
-                      <div className="text-center p-6 rounded-lg bg-amber-500/5 border border-amber-500/20">
-                        <div className="text-3xl font-bold text-amber-500 mb-2">87%</div>
+                      <div className="text-center p-6 rounded-lg bg-cyan-500/5 border border-cyan-500/20">
+                        <div className="text-3xl font-bold text-cyan-500 mb-2">87%</div>
                         <div className="font-medium">Mentor Match Quality</div>
                         <div className="text-sm text-muted-foreground">+3% from last month</div>
                       </div>
-                      <div className="text-center p-6 rounded-lg bg-rose-500/5 border border-rose-500/20">
-                        <div className="text-3xl font-bold text-rose-500 mb-2">156</div>
+                      <div className="text-center p-6 rounded-lg bg-violet-500/5 border border-violet-500/20">
+                        <div className="text-3xl font-bold text-violet-500 mb-2">156</div>
                         <div className="font-medium">Total Matches</div>
                         <div className="text-sm text-muted-foreground">+23 from last month</div>
                       </div>
@@ -415,19 +415,19 @@ export default function Analytics() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between p-4 rounded-lg bg-emerald-500/5 border border-emerald-500/20">
+                      <div className="flex items-center justify-between p-4 rounded-lg bg-green-500/5 border border-green-500/20">
                         <div>
                           <div className="font-medium">Senior Frontend Developer - Stripe</div>
                           <div className="text-sm text-muted-foreground">95% match • Applied 3 days ago</div>
                         </div>
-                        <div className="text-emerald-500 font-semibold">Interview Scheduled</div>
+                        <div className="text-green-500 font-semibold">Interview Scheduled</div>
                       </div>
-                      <div className="flex items-center justify-between p-4 rounded-lg bg-amber-500/5 border border-amber-500/20">
+                      <div className="flex items-center justify-between p-4 rounded-lg bg-cyan-500/5 border border-cyan-500/20">
                         <div>
                           <div className="font-medium">Mentor: Sarah Chen - Google</div>
                           <div className="text-sm text-muted-foreground">92% match • Connected 1 week ago</div>
                         </div>
-                        <div className="text-amber-500 font-semibold">Session Completed</div>
+                        <div className="text-cyan-500 font-semibold">Session Completed</div>
                       </div>
                       <div className="flex items-center justify-between p-4 rounded-lg bg-primary/5 border border-primary/20">
                         <div>

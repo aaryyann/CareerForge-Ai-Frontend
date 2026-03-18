@@ -3,17 +3,17 @@
 import { motion } from "framer-motion"
 import { useNavigate } from "react-router-dom"
 import { Users, Target, UserCheck } from "lucide-react"
-import { Navbar } from "@/components/Navbar"
+import { Navbar } from "@/components/layout"
 import { Card } from "@/components/ui/card"
-import { useAuth } from "@/hooks/useAuthHook"
+import { useAuth } from "@/hooks/useAuth"
 
 const roles = [
   {
-    id: "jobseeker",
+    id: "job_seeker",
     title: "Job Seeker",
     description: "Find your dream career with AI-powered matching and personalized roadmaps",
     icon: Target,
-    gradient: "from-emerald-500 to-emerald-600",
+    gradient: "from-blue-600 to-blue-700",
     route: "/register/jobseeker"
   },
   {
@@ -21,7 +21,7 @@ const roles = [
     title: "Mentor", 
     description: "Share your expertise and guide the next generation of professionals",
     icon: Users,
-    gradient: "from-primary to-rose-600",
+    gradient: "from-primary to-indigo-600",
     route: "/register/mentor"
   },
   {
@@ -29,7 +29,7 @@ const roles = [
     title: "Recruiter",
     description: "Discover top talent and build amazing teams with AI insights",
     icon: UserCheck,
-    gradient: "from-accent to-amber-600",
+    gradient: "from-accent to-violet-600",
     route: "/register/recruiter"
   }
 ]
@@ -46,7 +46,7 @@ export default function ChooseRole() {
           'Content-Type': 'application/json',
         },
         credentials: 'include', // Include httpOnly cookies
-        body: JSON.stringify({ role: route.split('/').pop() }),
+        body: JSON.stringify({ role: roles.find(r => r.route === route)?.id }),
       });
       
       if (!response.ok) {
@@ -126,7 +126,7 @@ export default function ChooseRole() {
                   <motion.div 
                     className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
                     style={{
-                      background: `linear-gradient(135deg, transparent 0%, rgba(244, 63, 94, 0.1) 50%, transparent 100%)`,
+                      background: `linear-gradient(135deg, transparent 0%, rgba(99, 102, 241, 0.1) 50%, transparent 100%)`,
                       filter: 'blur(20px)'
                     }}
                   />

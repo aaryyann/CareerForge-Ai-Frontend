@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuthHook";
-import { DASHBOARD_ROUTES } from "@/types/auth";
+import { useAuth } from "@/hooks/useAuth";
+import { DASHBOARD_ROUTES, ROUTES } from "@/constants";
 
 // ============================================================================
 // AUTHENTICATION REDIRECT COMPONENT
@@ -24,13 +24,13 @@ export function AuthRedirect() {
   // Redirect to sign in if not authenticated
   if (!user) {
     console.log('No user, redirecting to signin');
-    return <Navigate to="/signin" replace />;
+    return <Navigate to={ROUTES.SIGN_IN} replace />;
   }
 
   // Redirect to choose role if profile is not completed
   if (!isProfileCompleted()) {
     console.log('Profile not completed, redirecting to choose-role');
-    return <Navigate to="/choose-role" replace />;
+    return <Navigate to={ROUTES.CHOOSE_ROLE} replace />;
   }
 
   // Redirect to appropriate dashboard based on user role

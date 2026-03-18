@@ -6,84 +6,84 @@
 /* CareerForge-AI Design System */
 @layer base {
   :root {
-    /* Dark mode first - premium blacks and rich accents */
-    --background: 0 0% 0%;
-    --foreground: 0 0% 98%;
+    /* Dark mode first - deep indigo with periwinkle/violet accents */
+    --background: 244 47% 8%;
+    --foreground: 226 100% 97%;
 
-    --card: 0 0% 3%;
-    --card-foreground: 0 0% 95%;
+    --card: 244 47% 11%;
+    --card-foreground: 226 100% 95%;
 
-    --popover: 0 0% 2%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 244 47% 9%;
+    --popover-foreground: 226 100% 95%;
 
-    --primary: 350 89% 60%;
-    --primary-foreground: 0 0% 0%;
+    --primary: 235 90% 74%;
+    --primary-foreground: 244 47% 10%;
 
-    --secondary: 0 0% 8%;
-    --secondary-foreground: 0 0% 90%;
+    --secondary: 255 92% 76%;
+    --secondary-foreground: 244 47% 10%;
 
-    --muted: 0 0% 6%;
-    --muted-foreground: 0 0% 65%;
+    --muted: 244 30% 15%;
+    --muted-foreground: 226 30% 60%;
 
-    --accent: 25 95% 53%;
-    --accent-foreground: 0 0% 0%;
+    --accent: 212 96% 78%;
+    --accent-foreground: 244 47% 10%;
 
-    --destructive: 350 89% 60%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 15%;
-    --input: 0 0% 10%;
-    --ring: 350 89% 60%;
+    --border: 244 25% 20%;
+    --input: 244 25% 16%;
+    --ring: 239 84% 67%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 2%;
-    --sidebar-foreground: 0 0% 90%;
-    --sidebar-primary: 350 89% 60%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 0 0% 8%;
-    --sidebar-accent-foreground: 0 0% 90%;
-    --sidebar-border: 0 0% 12%;
-    --sidebar-ring: 350 89% 60%;
+    --sidebar-background: 244 47% 6%;
+    --sidebar-foreground: 226 60% 90%;
+    --sidebar-primary: 235 90% 74%;
+    --sidebar-primary-foreground: 244 47% 10%;
+    --sidebar-accent: 244 30% 15%;
+    --sidebar-accent-foreground: 226 60% 90%;
+    --sidebar-border: 244 25% 18%;
+    --sidebar-ring: 239 84% 67%;
   }
 
   .light {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3%;
+    --background: 226 100% 97%;
+    --foreground: 244 47% 20%;
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 3%;
+    --card-foreground: 244 47% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3%;
+    --popover-foreground: 244 47% 20%;
 
-    --primary: 350 89% 60%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 235 90% 74%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 9%;
+    --secondary: 255 92% 76%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 226 100% 95%;
+    --muted-foreground: 244 20% 50%;
 
-    --accent: 25 95% 53%;
-    --accent-foreground: 0 0% 9%;
+    --accent: 212 96% 78%;
+    --accent-foreground: 244 47% 20%;
 
-    --destructive: 350 89% 60%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 350 89% 60%;
+    --border: 226 50% 90%;
+    --input: 226 50% 90%;
+    --ring: 239 84% 67%;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 0 0% 9%;
-    --sidebar-primary: 350 89% 60%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 0 0% 96%;
-    --sidebar-accent-foreground: 0 0% 9%;
-    --sidebar-border: 0 0% 90%;
-    --sidebar-ring: 350 89% 60%;
+    --sidebar-background: 226 100% 96%;
+    --sidebar-foreground: 244 47% 20%;
+    --sidebar-primary: 235 90% 74%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 226 100% 95%;
+    --sidebar-accent-foreground: 244 47% 20%;
+    --sidebar-border: 226 50% 90%;
+    --sidebar-ring: 239 84% 67%;
   }
 }
 
@@ -94,27 +94,52 @@
 
   html {
     @apply antialiased;
+    font-family: "Raleway", ui-sans-serif, system-ui, sans-serif;
+    font-size: 16px;
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground antialiased;
+    font-family: "Raleway", ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
   }
 
-  /* Premium typography */
+  /* Typography — Poppins for headings, Raleway for body */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Poppins", "Raleway", ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
   h1 {
-    @apply text-5xl md:text-7xl font-bold tracking-tight;
+    @apply text-[48px] md:text-[64px] font-bold;
   }
 
   h2 {
-    @apply text-3xl md:text-5xl font-bold tracking-tight;
+    @apply text-[32px] md:text-[40px] font-semibold;
   }
 
   h3 {
-    @apply text-2xl md:text-3xl font-semibold tracking-tight;
+    @apply text-[20px] md:text-[24px] font-semibold;
   }
 
   h4 {
-    @apply text-xl md:text-2xl font-semibold tracking-tight;
+    @apply text-[18px] md:text-[20px] font-semibold;
+  }
+
+  p {
+    @apply text-[16px] md:text-[18px];
+    line-height: 1.7;
+  }
+
+  button {
+    @apply text-[14px] md:text-[16px] font-medium;
+    letter-spacing: 0.01em;
+  }
+
+  small, .text-caption {
+    @apply text-[12px] md:text-[14px];
   }
 
   /* Premium components */
@@ -158,6 +183,16 @@
            transition-all duration-200;
   }
 
+  /* Hide number spinners */
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
   /* Premium card styles */
   .card-premium {
     @apply bg-card/50 border border-border/20 backdrop-blur-lg rounded-xl
@@ -199,4 +234,103 @@
       box-shadow: 0 0 40px hsl(var(--primary) / 0.8);
     }
   }
+
+  /* Claymorphism design system */
+  .clay {
+    border-radius: 1.5rem;
+    background: hsl(var(--card));
+    box-shadow:
+      8px 8px 20px hsl(var(--primary) / 0.1),
+      -4px -4px 12px hsl(var(--background)),
+      inset 2px 2px 4px hsl(var(--accent) / 0.12),
+      inset -1px -1px 3px hsl(var(--primary) / 0.06);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .clay:hover {
+    transform: translateY(-4px);
+    background: hsl(var(--muted));
+    box-shadow:
+      12px 12px 28px hsl(var(--primary) / 0.14),
+      -6px -6px 16px hsl(var(--background)),
+      inset 2px 2px 4px hsl(var(--accent) / 0.15),
+      inset -1px -1px 3px hsl(var(--primary) / 0.08);
+  }
+
+  .clay-static {
+    border-radius: 1.5rem;
+    background: hsl(var(--card));
+    box-shadow:
+      8px 8px 20px hsl(var(--primary) / 0.1),
+      -4px -4px 12px hsl(var(--background)),
+      inset 2px 2px 4px hsl(var(--accent) / 0.12),
+      inset -1px -1px 3px hsl(var(--primary) / 0.06);
+  }
+
+  .clay-sm {
+    border-radius: 1rem;
+    background: hsl(var(--card));
+    box-shadow:
+      4px 4px 10px hsl(var(--primary) / 0.08),
+      -2px -2px 6px hsl(var(--background)),
+      inset 1px 1px 2px hsl(var(--accent) / 0.1),
+      inset -1px -1px 2px hsl(var(--primary) / 0.05);
+  }
+
+  .clay-icon {
+    border-radius: 1.25rem;
+    background: hsl(var(--muted));
+    box-shadow:
+      4px 4px 8px hsl(var(--primary) / 0.12),
+      -2px -2px 6px hsl(var(--background)),
+      inset 1px 1px 3px hsl(var(--accent) / 0.2),
+      inset -1px -1px 2px hsl(var(--primary) / 0.08);
+  }
+
+  .clay-primary {
+    border-radius: 1.5rem;
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    box-shadow:
+      6px 6px 16px hsl(var(--primary) / 0.3),
+      -3px -3px 10px hsl(var(--accent) / 0.15),
+      inset 2px 2px 4px hsl(var(--accent) / 0.25),
+      inset -1px -1px 3px hsl(var(--primary) / 0.15);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .clay-primary:hover {
+    transform: translateY(-2px);
+    background: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+    box-shadow:
+      8px 8px 20px hsl(var(--accent) / 0.35),
+      -4px -4px 12px hsl(var(--primary) / 0.2),
+      inset 2px 2px 5px hsl(var(--primary) / 0.3),
+      inset -1px -1px 3px hsl(var(--accent) / 0.2);
+  }
+
+  .clay-inset {
+    border-radius: 1rem;
+    background: hsl(var(--muted));
+    box-shadow:
+      inset 3px 3px 6px hsl(var(--primary) / 0.1),
+      inset -2px -2px 4px hsl(var(--background));
+  }
+
+  .clay-blob {
+    border-radius: 50%;
+    background: hsl(var(--primary) / 0.08);
+    box-shadow:
+      inset 4px 4px 10px hsl(var(--accent) / 0.15),
+      inset -3px -3px 8px hsl(var(--primary) / 0.1);
+  }
+}
+
+/* Force consistent font on all form elements (outside @layer for highest specificity) */
+input,
+textarea,
+select,
+button {
+  font-family: "Raleway", ui-sans-serif, system-ui, sans-serif !important;
 }

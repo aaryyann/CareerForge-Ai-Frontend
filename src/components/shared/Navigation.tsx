@@ -1,4 +1,4 @@
-import { useAuth } from "@/hooks/useAuthHook"
+import { useAuth } from "@/hooks/useAuth"
 import type { UserRole } from "@/types/auth"
 
 // ============================================================================
@@ -14,11 +14,11 @@ interface NavigationItem {
 // Define navigation items for each role
 const navigationItems: NavigationItem[] = [
   // Job Seeker routes
-  { name: "Dashboard", href: "/dashboard", roles: ["jobseeker"] },
-  { name: "Upload Resume", href: "/upload-resume", roles: ["jobseeker"] },
-  { name: "Mentor Match", href: "/mentor-match", roles: ["jobseeker"] },
-  { name: "Role Suggest", href: "/role-suggest", roles: ["jobseeker"] },
-  { name: "Roadmap", href: "/roadmap", roles: ["jobseeker"] },
+  { name: "Dashboard", href: "/dashboard", roles: ["job_seeker"] },
+  { name: "Upload Resume", href: "/upload-resume", roles: ["job_seeker"] },
+  { name: "Mentor Match", href: "/mentor-match", roles: ["job_seeker"] },
+  { name: "Role Suggest", href: "/role-suggest", roles: ["job_seeker"] },
+  { name: "Roadmap", href: "/roadmap", roles: ["job_seeker"] },
   
   // Recruiter routes
   { name: "Dashboard", href: "/recruiter-dashboard", roles: ["recruiter"] },
@@ -33,10 +33,10 @@ const navigationItems: NavigationItem[] = [
   { name: "Sessions", href: "/sessions", roles: ["mentor"] },
   
   // Common routes (shared across multiple roles)
-  { name: "Profile", href: "/profile", roles: ["jobseeker", "recruiter", "mentor"] },
-  { name: "AI Chat", href: "/ai-chat", roles: ["jobseeker", "mentor"] },
-  { name: "Model Benchmarks", href: "/model-benchmarks", roles: ["jobseeker", "recruiter", "mentor"] },
-  { name: "Voice Input", href: "/voice-input", roles: ["jobseeker", "mentor"] },
+  { name: "Profile", href: "/profile", roles: ["job_seeker", "recruiter", "mentor"] },
+  { name: "AI Chat", href: "/ai-chat", roles: ["job_seeker", "mentor"] },
+  { name: "Model Benchmarks", href: "/model-benchmarks", roles: ["job_seeker", "recruiter", "mentor"] },
+  { name: "Voice Input", href: "/voice-input", roles: ["job_seeker", "mentor"] },
 ]
 
 // ============================================================================
@@ -57,7 +57,7 @@ export function useNavigation() {
 
 export function getRoleDisplayName(role: UserRole): string {
   switch (role) {
-    case "jobseeker":
+    case "job_seeker":
       return "Job Seeker"
     case "recruiter":
       return "Recruiter"
@@ -70,7 +70,7 @@ export function getRoleDisplayName(role: UserRole): string {
 
 export function getDashboardRoute(role: UserRole): string {
   switch (role) {
-    case "jobseeker":
+    case "job_seeker":
       return "/dashboard"
     case "recruiter":
       return "/recruiter-dashboard"

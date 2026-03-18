@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ThemeProvider } from "@/components/ThemeProvider";
+import { ThemeProvider } from "@/components/layout";
 import { AuthProvider } from "@/hooks/useAuth";
 import { AuthGuard } from "@/components/shared/AuthGuard";
 import { AuthRedirect } from "@/components/shared/AuthRedirect";
@@ -27,12 +27,14 @@ import VoiceInput from "./pages/shared/VoiceInput";
 import AIChat from "./pages/shared/AIChat";
 import ModelBenchmarks from "./pages/shared/ModelBenchmarks";
 import NotFound from "./pages/NotFound";
-// import Profile from "./pages/jobseeker/Profile";
+import Profile from "./pages/shared/Profile";
 import JobPostings from "./pages/recruiter/JobPostings";
 import CandidateSearch from "./pages/recruiter/CandidateSearch";
 import Applications from "./pages/recruiter/Applications";
 import MenteeMatches from "./pages/mentor/MenteeMatches";
 import Sessions from "./pages/mentor/Sessions";
+import CheckEmail from "./pages/CheckEmail";
+import VerifyEmail from "./pages/VerifyEmail";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +50,8 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/signin" element={<SignIn />} />
               <Route path="/signup" element={<SignUp />} />
+              <Route path="/check-email" element={<CheckEmail />} />
+              <Route path="/verify-email" element={<VerifyEmail />} />
               <Route path="/choose-role" element={<ChooseRole />} />
               <Route path="/redirect" element={<AuthRedirect />} />
               <Route path="/register/jobseeker" element={<JobSeekerRegister />} />
@@ -55,32 +59,32 @@ const App = () => (
               <Route path="/register/recruiter" element={<RecruiterRegister />} />
 
               <Route path="/dashboard" element={
-                <AuthGuard allowedRoles={["jobseeker"]}>
+                <AuthGuard allowedRoles={["job_seeker"]}>
                   <Dashboard />
                 </AuthGuard>
               } />
-              {/* <Route path="/profile" element={
-                <AuthGuard allowedRoles={["jobseeker"]}>
+              <Route path="/profile" element={
+                <AuthGuard allowedRoles={["job_seeker", "recruiter", "mentor"]}>
                   <Profile />
                 </AuthGuard>
-              } /> */}
+              } />
               <Route path="/upload-resume" element={
-                <AuthGuard allowedRoles={["jobseeker"]}>
+                <AuthGuard allowedRoles={["job_seeker"]}>
                   <UploadResume />
                 </AuthGuard>
               } />
               <Route path="/mentor-match" element={
-                <AuthGuard allowedRoles={["jobseeker"]}>
+                <AuthGuard allowedRoles={["job_seeker"]}>
                   <MentorMatch />
                 </AuthGuard>
               } />
               <Route path="/role-suggest" element={
-                <AuthGuard allowedRoles={["jobseeker"]}>
+                <AuthGuard allowedRoles={["job_seeker"]}>
                   <RoleSuggest />
                 </AuthGuard>
               } />
               <Route path="/roadmap" element={
-                <AuthGuard allowedRoles={["jobseeker"]}>
+                <AuthGuard allowedRoles={["job_seeker"]}>
                   <Roadmap />
                 </AuthGuard>
               } />
@@ -128,17 +132,17 @@ const App = () => (
               } />
 
               <Route path="/voice-input" element={
-                <AuthGuard allowedRoles={["jobseeker", "mentor"]}>
+                <AuthGuard allowedRoles={["job_seeker", "mentor"]}>
                   <VoiceInput />
                 </AuthGuard>
               } />
               <Route path="/ai-chat" element={
-                <AuthGuard allowedRoles={["jobseeker", "mentor"]}>
+                <AuthGuard allowedRoles={["job_seeker", "mentor"]}>
                   <AIChat />
                 </AuthGuard>
               } />
               <Route path="/model-benchmarks" element={
-                <AuthGuard allowedRoles={["jobseeker", "recruiter", "mentor"]}>
+                <AuthGuard allowedRoles={["job_seeker", "recruiter", "mentor"]}>
                   <ModelBenchmarks />
                 </AuthGuard>
               } />

@@ -6,14 +6,64 @@ import {
   useCallback,
 } from "react";
 import { AuthContext } from "@/contexts/AuthContext";
-import type { 
-  User, 
+import type {
+  User,
   UserRole,
-  LoginCredentials, 
+  LoginCredentials,
   RegisterCredentials,
   ProfileCompletionData,
-  AuthContextType
+  AuthContextType,
 } from "@/types/auth";
+
+// ============================================================================
+// AUTHENTICATION HOOK
+// ============================================================================
+
+export function useAuth(): AuthContextType {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+}
+
+// ============================================================================
+// API HELPER
+// ============================================================================
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+async function apiRequest(url: string, options: RequestInit = {}) {
+  const response = await fetch(`${API_URL}${url}`, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+    credentials: "include",
+  });
+
+  const data = await response.json().catch(() => ({ message: "Request failed" }));
+
+  if (!response.ok) {
+    const error: any = new Error(data.message || "Request failed");
+    error.code = data.code;
+    error.statusCode = response.status;
+    throw error;
+  }
+
+  return data;
+}
+
+// ============================================================================
+// PROFILE ENDPOINT MAP
+// ============================================================================
+
+const PROFILE_ENDPOINTS: Record<UserRole, string> = {
+  job_seeker: "/api/v1/auth/job-seeker/profile",
+  recruiter: "/api/v1/auth/recruiter/profile",
+  mentor: "/api/v1/auth/mentor/profile",
+};
 
 // ============================================================================
 // AUTHENTICATION PROVIDER
@@ -27,186 +77,100 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // UTILITY FUNCTIONS
   // ============================================================================
 
-  const hasRole = useCallback((role: UserRole): boolean => {
-    return user?.role === role;
-  }, [user?.role]);
+  const hasRole = useCallback(
+    (role: UserRole): boolean => user?.role === role,
+    [user?.role]
+  );
 
-  const hasAnyRole = useCallback((roles: UserRole[]): boolean => {
-    return user ? roles.includes(user.role) : false;
-  }, [user]);
+  const hasAnyRole = useCallback(
+    (roles: UserRole[]): boolean => (user ? roles.includes(user.role) : false),
+    [user]
+  );
 
   const isProfileCompleted = useCallback((): boolean => {
     if (!user) return false;
-    
-    // Check multiple indicators of profile completion
-    const hasProfileData = user.profile !== null && user.profile !== undefined;
-    const hasProfileCompletedFlag = user.isProfileCompleted === true;
-    const hasRole = user.role && user.role.length > 0;
-    
-    const completed = hasProfileCompletedFlag || (hasProfileData && hasRole);
-    
-    console.log('isProfileCompleted check:', { 
-      user, 
-      hasProfileData, 
-      hasProfileCompletedFlag, 
-      hasRole, 
-      completed 
-    });
-    
-    return completed;
+    return user.profile !== null && user.profile !== undefined;
   }, [user]);
 
   // ============================================================================
-  // API CALLS
+  // AUTH METHODS
   // ============================================================================
 
-  const makeAuthenticatedRequest = async (url: string, options: RequestInit = {}) => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL}${url}`, {
-      ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
-      credentials: 'include',
-    });
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Request failed' }));
-      throw new Error(error.message || 'Request failed');
-    }
-
-    return response.json();
-  };
-
-  // ============================================================================
-  // AUTHENTICATION METHODS
-  // ============================================================================
-
-  const checkAuth = useCallback(async (): Promise<void> => {
+  const checkAuth = useCallback(async () => {
     try {
-      const userData = await makeAuthenticatedRequest('/api/v1/auth/me');
-      setUser(userData.data);
-    } catch (error) {
-      console.error('Auth check failed:', error);
-      // Try to refresh token
-      try {
-        const userData = await makeAuthenticatedRequest('/api/auth/refresh', {
-          method: 'POST',
-        });
-        setUser(userData.data);
-      } catch (refreshError) {
-        console.error('Token refresh failed:', refreshError);
-        setUser(null);
-      }
+      const result = await apiRequest("/api/v1/auth/me");
+      setUser(result.data);
+    } catch {
+      setUser(null);
     }
   }, []);
 
   const signIn = async (credentials: LoginCredentials): Promise<void> => {
-    try {
-      // First, sign in to get authentication token
-      await makeAuthenticatedRequest('/api/v1/auth/signin', {
-        method: 'POST',
-        body: JSON.stringify(credentials),
-      });
-      
-      console.log('Sign in successful, now fetching complete user data...');
-      
-      // Then fetch complete user data from /me endpoint
-      const userData = await makeAuthenticatedRequest('/api/v1/auth/me');
-      console.log('Complete user data fetched:', userData);
-      setUser(userData?.data);
-    } catch (error) {
-      console.error('Sign in failed:', error);
-      throw error;
-    }
+    await apiRequest("/api/v1/auth/signin", {
+      method: "POST",
+      body: JSON.stringify(credentials),
+    });
+
+    // Fetch complete user data after login
+    const result = await apiRequest("/api/v1/auth/me");
+    setUser(result.data);
   };
 
   const signUp = async (credentials: RegisterCredentials): Promise<void> => {
-    try {
-      // First, sign up to get authentication token
-      await makeAuthenticatedRequest('/api/v1/auth/signup', {
-        method: 'POST',
-        body: JSON.stringify(credentials),
-      });
-      
-      console.log('Sign up successful, now fetching complete user data...');
-      
-      // Then fetch complete user data from /me endpoint
-      const userData = await makeAuthenticatedRequest('/api/v1/auth/me');
-      console.log('Complete user data fetched:', userData);
-      setUser(userData?.data);
-    } catch (error) {
-      console.error('Sign up failed:', error);
-      throw error;
-    }
+    // Signup no longer sets a session cookie — user must verify email first
+    await apiRequest("/api/v1/auth/signup", {
+      method: "POST",
+      body: JSON.stringify(credentials),
+    });
   };
 
   const signOut = async (): Promise<void> => {
     try {
-      await makeAuthenticatedRequest('/api/v1/auth/signout', {
-        method: 'POST',
-      });
-    } catch (error) {
-      console.error('Sign out failed:', error);
+      await apiRequest("/api/v1/auth/signout", { method: "POST" });
+    } catch {
+      // Ignore signout errors
     } finally {
       setUser(null);
     }
   };
 
   const refreshToken = async (): Promise<void> => {
-    try {
-      const userData = await makeAuthenticatedRequest('/api/auth/refresh', {
-        method: 'POST',
-      });
-      setUser(userData);
-    } catch (error) {
-      console.error('Token refresh failed:', error);
-      setUser(null);
-      throw error;
-    }
+    const result = await apiRequest("/api/auth/refresh", { method: "POST" });
+    setUser(result.data);
   };
 
-  const completeProfile = async (role: UserRole, profileData: ProfileCompletionData): Promise<void> => {
-    try {
-      const endpoint = getProfileEndpoint(role);
-      await makeAuthenticatedRequest(endpoint, {
-        method: 'POST',
-        body: JSON.stringify(profileData),
-      });
-      
-      console.log('Profile completed, now fetching updated user data...');
-      
-      // Fetch the updated complete user data from /me endpoint
-      const userData = await makeAuthenticatedRequest('/api/v1/auth/me');
-      console.log('Updated user data fetched:', userData);
-      setUser(userData.data);
-    } catch (error) {
-      console.error('Complete profile failed:', error);
-      throw error;
-    }
+  const completeProfile = async (
+    role: UserRole,
+    profileData: ProfileCompletionData
+  ): Promise<void> => {
+    await apiRequest(PROFILE_ENDPOINTS[role], {
+      method: "POST",
+      body: JSON.stringify(profileData),
+    });
+
+    // Refresh user data after profile completion
+    const result = await apiRequest("/api/v1/auth/me");
+    setUser(result.data);
   };
 
-  const getProfileEndpoint = (role: UserRole): string => {
-    const endpoints = {
-      jobseeker: '/api/v1/auth/job-seeker/profile',
-      recruiter: '/api/v1/auth/recruiter/profile',
-      mentor: '/api/v1/auth/mentor/profile',
-    };
-    return endpoints[role];
+  const resendVerification = async (email: string): Promise<void> => {
+    await apiRequest("/api/v1/auth/resend-verification", {
+      method: "POST",
+      body: JSON.stringify({ email }),
+    });
   };
 
   // ============================================================================
-  // EFFECTS
+  // INIT
   // ============================================================================
 
   useEffect(() => {
-    const initializeAuth = async () => {
+    const init = async () => {
       setIsLoading(true);
       await checkAuth();
       setIsLoading(false);
     };
-
-    initializeAuth();
+    init();
   }, [checkAuth]);
 
   // ============================================================================
@@ -214,26 +178,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ============================================================================
 
   const contextValue: AuthContextType = {
-    // State
     user,
     isLoading,
-    
-    // Actions
     signIn,
     signUp,
     signOut,
     refreshToken,
     completeProfile,
-    
-    // Utilities
+    resendVerification,
     hasRole,
     hasAnyRole,
     isProfileCompleted,
   };
 
   return (
-    <AuthContext.Provider value={contextValue}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
   );
 }

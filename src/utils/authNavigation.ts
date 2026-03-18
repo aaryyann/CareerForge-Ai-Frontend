@@ -1,4 +1,4 @@
-import { DASHBOARD_ROUTES } from "@/types/auth";
+import { DASHBOARD_ROUTES, ROUTES } from "@/constants";
 
 // ============================================================================
 // AUTHENTICATION NAVIGATION UTILITIES
@@ -9,24 +9,24 @@ export function getDashboardRoute(userRole: string): string | null {
 }
 
 export function shouldRedirectToDashboard(
-  isLoading: boolean, 
-  user: any, 
+  isLoading: boolean,
+  user: any,
   isProfileCompleted: boolean
 ): boolean {
   return !isLoading && user !== null && isProfileCompleted;
 }
 
 export function getRedirectRoute(
-  user: any, 
+  user: any,
   isProfileCompleted: boolean
 ): string {
   if (!user) {
-    return "/signin";
+    return ROUTES.SIGN_IN;
   }
-  
+
   if (!isProfileCompleted) {
-    return "/choose-role";
+    return ROUTES.CHOOSE_ROLE;
   }
-  
-  return getDashboardRoute(user.role) || "/";
+
+  return getDashboardRoute(user.role) || ROUTES.HOME;
 }

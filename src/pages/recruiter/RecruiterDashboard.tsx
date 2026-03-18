@@ -6,7 +6,7 @@ import { Users, TrendingUp, Star, Calendar, FileText, Plus } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Navbar } from "@/components/Navbar"
+import { Navbar } from "@/components/layout"
 
 export default function RecruiterDashboard() {
   const [stats] = useState({
@@ -85,7 +85,7 @@ export default function RecruiterDashboard() {
               <CardContent>
                 <div className="flex items-center justify-between">
                   <span className="text-2xl font-bold">{stats.hiredThisMonth}</span>
-                  <TrendingUp className="h-5 w-5 text-emerald-500" />
+                  <TrendingUp className="h-5 w-5 text-green-500" />
                 </div>
               </CardContent>
             </Card>
@@ -97,7 +97,7 @@ export default function RecruiterDashboard() {
               <CardContent>
                 <div className="flex items-center justify-between">
                   <span className="text-2xl font-bold">{stats.responseRate}%</span>
-                  <Star className="h-5 w-5 text-amber-500" />
+                  <Star className="h-5 w-5 text-cyan-500" />
                 </div>
               </CardContent>
             </Card>

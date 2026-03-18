@@ -1,4 +1,3 @@
-
 "use client"
 
 import { motion } from "framer-motion"
@@ -8,23 +7,18 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Navbar } from "@/components/Navbar"
-import { useAuth } from "@/hooks/useAuthHook"
+import { Navbar } from "@/components/layout"
+import { useAuth } from "@/hooks/useAuth"
 import { toast } from "sonner"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import type { UserRole } from "@/types/auth"
 
 const signUpSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string().min(6, "Please confirm your password"),
-  role: z.enum(["jobseeker", "recruiter", "mentor"], {
-    required_error: "Please select a role",
-  }),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -42,17 +36,10 @@ export default function SignUp() {
   const {
     register,
     handleSubmit,
-    setValue,
-    watch,
     formState: { errors },
   } = useForm<SignUpFormData>({
     resolver: zodResolver(signUpSchema),
-    defaultValues: {
-      role: "jobseeker",
-    },
   })
-
-  const selectedRole = watch("role")
 
   const onSubmit = async (data: SignUpFormData) => {
     try {
@@ -61,10 +48,9 @@ export default function SignUp() {
         email: data.email,
         password: data.password,
         confirmPassword: data.confirmPassword,
-        role: data.role as UserRole,
       })
-      toast.success("Account created successfully!")
-      navigate("/choose-role")
+      toast.success("Account created! Check your email to verify.")
+      navigate("/check-email", { state: { email: data.email } })
     } catch (error: Error | unknown) {
       toast.error((error as Error).message || "Failed to create account")
     } finally {
@@ -108,7 +94,6 @@ export default function SignUp() {
                     <p className="text-sm text-red-500">{errors.email.message}</p>
                   )}
                 </div>
-
 
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>

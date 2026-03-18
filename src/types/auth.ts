@@ -2,7 +2,7 @@
 // AUTHENTICATION TYPES
 // ============================================================================
 
-export type UserRole = "jobseeker" | "recruiter" | "mentor";
+export type UserRole = "job_seeker" | "recruiter" | "mentor";
 
 // ============================================================================
 // USER & PROFILE INTERFACES
@@ -12,16 +12,21 @@ export interface UserProfile {
   id: string;
   fullName?: string;
   bio?: string;
-  profilePicture?: string;
-  expertise?: string[];
-  companyName?: string;
-  yearOfExperience?: string;
-  preferredRoles?: string[];
-  yearOfMentoring?: string;
-  availability?: string;
-  jobTitle?: string;
-  companySize?: string;
-  industry?: string;
+  rolePreference?: string;
+  yearOfExp?: number;
+  currentTitle?: string;
+  experienceLevel?: string;
+  linkedinUrl?: string;
+  githubUrl?: string;
+  phone?: string;
+  claimedLocation?: string;
+  workTypePref?: string;
+  expertiseAreas?: string[];
+  position?: string;
+  jobLocation?: string;
+  title?: string;
+  company?: string;
+  yearsOfExp?: number;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -30,7 +35,9 @@ export interface User {
   id: string;
   email: string;
   role: UserRole;
-  isProfileCompleted: boolean;
+  isEmailVerified: boolean;
+  isActive: boolean;
+  avatarUrl: string | null;
   profile: UserProfile | null;
   createdAt: string;
   updatedAt: string;
@@ -49,20 +56,37 @@ export interface RegisterCredentials {
   email: string;
   password: string;
   confirmPassword: string;
-  role?: UserRole;
 }
 
 export interface ProfileCompletionData {
-  fullName?: string;
+  // Common
+  fullName: string;
+  phone?: string;
+  linkedinUrl?: string;
+
+  // Job Seeker
   bio?: string;
-  preferredRoles?: string[];
-  yearOfExperience?: string;
-  companyName?: string;
-  jobTitle?: string;
-  companySize?: string;
-  industry?: string;
-  expertise?: string;
-  yearOfMentoring?: string;
+  yearOfExp?: number;
+  currentTitle?: string;
+  experienceLevel?: string;
+  rolePreference?: string;
+  githubUrl?: string;
+  claimedLocation?: string;
+  workTypePref?: "remote" | "hybrid" | "onsite";
+  salaryExpMin?: string;
+  salaryExpMax?: string;
+  willingToRelocate?: boolean;
+
+  // Mentor
+  title?: string;
+  company?: string;
+  yearsOfExp?: number;
+  expertiseAreas?: string[];
+  pricePerSession?: string;
+
+  // Recruiter
+  position?: string;
+  jobLocation?: string;
 }
 
 // ============================================================================
@@ -70,15 +94,15 @@ export interface ProfileCompletionData {
 // ============================================================================
 
 export interface AuthResponse {
-  user: User;
-  token: string;
-  refreshToken: string;
+  isSuccess: boolean;
+  message: string;
+  data?: any;
+  code?: string;
 }
 
 export interface JWTPayload {
   userId: string;
   email: string;
-  role: UserRole;
   iat: number;
   exp: number;
 }
@@ -91,14 +115,15 @@ export interface AuthContextType {
   // State
   user: User | null;
   isLoading: boolean;
-  
+
   // Actions
   signIn: (credentials: LoginCredentials) => Promise<void>;
   signUp: (credentials: RegisterCredentials) => Promise<void>;
   signOut: () => Promise<void>;
   refreshToken: () => Promise<void>;
   completeProfile: (role: UserRole, profileData: ProfileCompletionData) => Promise<void>;
-  
+  resendVerification: (email: string) => Promise<void>;
+
   // Utilities
   hasRole: (role: UserRole) => boolean;
   hasAnyRole: (roles: UserRole[]) => boolean;
@@ -114,15 +139,3 @@ export interface RoleBasedRouteConfig {
   redirectTo?: string;
   requireProfile?: boolean;
 }
-
-export interface DashboardRoutes {
-  jobseeker: string;
-  recruiter: string;
-  mentor: string;
-}
-
-export const DASHBOARD_ROUTES: DashboardRoutes = {
-  jobseeker: "/dashboard",
-  recruiter: "/recruiter-dashboard", 
-  mentor: "/mentor-dashboard"
-} as const;

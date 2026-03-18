@@ -9,8 +9,8 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Navbar } from "@/components/Navbar"
-import { Footer } from "@/components/Footer"
+import { Navbar } from "@/components/layout"
+import { Footer } from "@/components/layout"
 
 const mentors = [
   {
@@ -221,9 +221,9 @@ export default function MentorMatch() {
                         size="sm"
                         onClick={() => toggleFavorite(mentor.id)}
                         className={`${
-                          favorites.includes(mentor.id) 
-                            ? "text-rose-500 hover:text-rose-600" 
-                            : "text-muted-foreground hover:text-rose-500"
+                          favorites.includes(mentor.id)
+                            ? "text-violet-500 hover:text-violet-600"
+                            : "text-muted-foreground hover:text-violet-500"
                         }`}
                       >
                         <Heart 
@@ -237,7 +237,7 @@ export default function MentorMatch() {
                     {/* Stats */}
                     <div className="flex items-center space-x-4 mb-4">
                       <div className="flex items-center space-x-1">
-                        <Star className="h-4 w-4 text-amber-500 fill-current" />
+                        <Star className="h-4 w-4 text-cyan-500 fill-current" />
                         <span className="text-sm font-medium">{mentor.rating}</span>
                       </div>
                       <div className="flex items-center space-x-1">
@@ -281,15 +281,15 @@ export default function MentorMatch() {
                     <div className="flex items-center justify-between mb-4">
                       <div className="text-sm">
                         <span className="text-muted-foreground">From </span>
-                        <span className="font-semibold text-emerald-500">
+                        <span className="font-semibold text-green-500">
                           ${mentor.pricePerSession}/session
                         </span>
                       </div>
                       <div className="text-xs">
                         <span className={`px-2 py-1 rounded-full ${
                           mentor.availability.includes("Available")
-                            ? "bg-emerald-500/10 text-emerald-500"
-                            : "bg-amber-500/10 text-amber-500"
+                            ? "bg-green-500/10 text-green-500"
+                            : "bg-cyan-500/10 text-cyan-500"
                         }`}>
                           {mentor.availability}
                         </span>
