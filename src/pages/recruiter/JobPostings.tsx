@@ -1,10 +1,12 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import {
   Plus, Search, Edit2, Trash2, Eye, MapPin, Briefcase,
   DollarSign, Users, Clock, Pause, Play, X, Loader2,
+  ArrowLeft, ArrowRight, Check, FileText, IndianRupee,
+  CalendarDays, Building2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -41,6 +43,12 @@ const workTypeOptions: { value: WorkType; label: string }[] = [
   { value: "remote", label: "Remote" },
   { value: "hybrid", label: "Hybrid" },
   { value: "onsite", label: "On-site" },
+]
+
+const FORM_STEPS = [
+  { id: 1, label: "Role", icon: Briefcase },
+  { id: 2, label: "Details", icon: FileText },
+  { id: 3, label: "Compensation", icon: IndianRupee },
 ]
 
 const emptyForm: CreateJobPayload = {
@@ -96,6 +104,7 @@ export default function JobPostings() {
   const [modalOpen, setModalOpen] = useState(false)
   const [editingJob, setEditingJob] = useState<Job | null>(null)
   const [form, setForm] = useState<CreateJobPayload>({ ...emptyForm })
+  const [formStep, setFormStep] = useState(1)
   const [skillInput, setSkillInput] = useState("")
   const [submitting, setSubmitting] = useState(false)
 
@@ -128,6 +137,7 @@ export default function JobPostings() {
     setEditingJob(null)
     setForm({ ...emptyForm })
     setSkillInput("")
+    setFormStep(1)
     setModalOpen(true)
   }
 
@@ -151,6 +161,7 @@ export default function JobPostings() {
         skills: j.skills || [],
       })
       setSkillInput("")
+      setFormStep(1)
       setModalOpen(true)
     } catch {
       toast.error("Failed to load job details")
@@ -174,10 +185,12 @@ export default function JobPostings() {
   const handleSubmit = async () => {
     if (!form.jobTitle?.trim()) {
       toast.error("Job title is required")
+      setFormStep(1)
       return
     }
     if (!form.jobDescription?.trim()) {
       toast.error("Job description is required")
+      setFormStep(2)
       return
     }
 
@@ -243,6 +256,18 @@ export default function JobPostings() {
     setForm(prev => ({ ...prev, [field]: value }))
   }
 
+  const handleNextStep = () => {
+    if (formStep === 1 && !form.jobTitle?.trim()) {
+      toast.error("Job title is required")
+      return
+    }
+    if (formStep === 2 && !form.jobDescription?.trim()) {
+      toast.error("Job description is required")
+      return
+    }
+    setFormStep(prev => Math.min(prev + 1, 3))
+  }
+
   const filteredJobs = jobs
 
   const activeCount = jobs.filter(j => j.isActive).length
@@ -252,11 +277,11 @@ export default function JobPostings() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="container mx-auto px-6 py-8 pt-20">
+      <div className="mx-auto w-[92%] max-w-6xl py-8 pt-24">
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold">Job Postings</h1>
-            <p className="text-muted-foreground mt-2">
+            <p className="text-muted-foreground text-sm mt-1">
               Manage your job listings and track applications
             </p>
           </div>
@@ -266,55 +291,29 @@ export default function JobPostings() {
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <Card className="card-premium">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Total Jobs</p>
-                  <p className="text-2xl font-bold">{jobs.length}</p>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-8">
+          {[
+            { label: "Total Jobs", value: jobs.length, icon: Briefcase, color: "text-primary/50" },
+            { label: "Active", value: activeCount, icon: Play, color: "text-green-500/50" },
+            { label: "Paused", value: pausedCount, icon: Pause, color: "text-yellow-500/50" },
+            { label: "Applications", value: totalApps, icon: Users, color: "text-blue-500/50" },
+          ].map((stat) => (
+            <Card key={stat.label} className="card-premium">
+              <CardContent className="p-4 md:p-5">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs md:text-sm text-muted-foreground">{stat.label}</p>
+                    <p className="text-2xl font-bold">{stat.value}</p>
+                  </div>
+                  <stat.icon className={`h-7 w-7 ${stat.color}`} />
                 </div>
-                <Briefcase className="h-8 w-8 text-primary/50" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="card-premium">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Active</p>
-                  <p className="text-2xl font-bold text-green-500">{activeCount}</p>
-                </div>
-                <Play className="h-8 w-8 text-green-500/50" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="card-premium">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Paused</p>
-                  <p className="text-2xl font-bold text-yellow-500">{pausedCount}</p>
-                </div>
-                <Pause className="h-8 w-8 text-yellow-500/50" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="card-premium">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">Applications</p>
-                  <p className="text-2xl font-bold text-blue-500">{totalApps}</p>
-                </div>
-                <Users className="h-8 w-8 text-blue-500/50" />
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          ))}
         </div>
 
-        <div className="flex gap-4 mb-6">
-          <div className="relative flex-1">
+        <div className="mb-6">
+          <div className="relative max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
               placeholder="Search job postings..."
@@ -327,13 +326,13 @@ export default function JobPostings() {
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList>
-            <TabsTrigger value="all">All Jobs ({jobs.length})</TabsTrigger>
+            <TabsTrigger value="all">All ({jobs.length})</TabsTrigger>
             <TabsTrigger value="active">Active ({activeCount})</TabsTrigger>
             <TabsTrigger value="paused">Paused ({pausedCount})</TabsTrigger>
           </TabsList>
 
           {["all", "active", "paused"].map((tab) => (
-            <TabsContent key={tab} value={tab} className="space-y-4">
+            <TabsContent key={tab} value={tab} className="space-y-3">
               {loading ? (
                 <div className="flex justify-center py-12">
                   <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -343,7 +342,7 @@ export default function JobPostings() {
                   <CardContent className="py-12 text-center">
                     <Briefcase className="h-12 w-12 mx-auto text-muted-foreground/40 mb-4" />
                     <h3 className="text-lg font-semibold mb-2">No jobs found</h3>
-                    <p className="text-muted-foreground mb-4">
+                    <p className="text-sm text-muted-foreground mb-4">
                       {searchTerm
                         ? "Try a different search term"
                         : "Post your first job to start finding candidates"}
@@ -360,105 +359,92 @@ export default function JobPostings() {
                 filteredJobs.map((job, index) => (
                   <motion.div
                     key={job.id}
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
+                    transition={{ delay: index * 0.03 }}
                   >
                     <Card className="card-premium hover:border-primary/30 transition-colors">
-                      <CardHeader className="pb-3">
-                        <div className="flex justify-between items-start">
-                          <div className="flex-1">
-                            <CardTitle className="text-xl">{job.jobTitle}</CardTitle>
-                            <CardDescription className="text-base mt-1 flex flex-wrap items-center gap-2">
-                              {job.companyName && <span>{job.companyName}</span>}
+                      <CardContent className="p-4 md:p-5">
+                        <div className="flex justify-between items-start gap-3">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <h3 className="text-base font-semibold truncate">{job.jobTitle}</h3>
+                              <Badge
+                                variant={job.isActive ? "default" : "secondary"}
+                                className={`text-[0.65rem] px-1.5 py-0 ${
+                                  job.isActive
+                                    ? "bg-green-500/10 text-green-500 border-green-500/20"
+                                    : "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
+                                }`}
+                              >
+                                {job.isActive ? "Active" : "Paused"}
+                              </Badge>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5 text-xs text-muted-foreground">
+                              {job.companyName && (
+                                <span className="flex items-center gap-1">
+                                  <Building2 className="h-3 w-3" />
+                                  {job.companyName}
+                                </span>
+                              )}
                               {job.jobLocation && (
                                 <span className="flex items-center gap-1">
-                                  <MapPin className="h-3.5 w-3.5" />
+                                  <MapPin className="h-3 w-3" />
                                   {job.jobLocation}
                                 </span>
                               )}
                               {job.jobType && (
-                                <Badge variant="outline" className="text-xs">
+                                <Badge variant="outline" className="text-[0.6rem] px-1.5 py-0 h-4">
                                   {formatJobType(job.jobType)}
                                 </Badge>
                               )}
                               {job.workType && (
-                                <Badge variant="outline" className="text-xs">
+                                <Badge variant="outline" className="text-[0.6rem] px-1.5 py-0 h-4">
                                   {formatJobType(job.workType)}
                                 </Badge>
                               )}
-                            </CardDescription>
-                          </div>
-                          <Badge
-                            variant={job.isActive ? "default" : "secondary"}
-                            className={
-                              job.isActive
-                                ? "bg-green-500/10 text-green-500 border-green-500/20"
-                                : "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
-                            }
-                          >
-                            {job.isActive ? "Active" : "Paused"}
-                          </Badge>
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="flex flex-wrap justify-between items-center">
-                          <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                            <span className="flex items-center gap-1">
-                              <Users className="h-3.5 w-3.5" />
-                              {job.applicationCount || 0} applications
-                            </span>
-                            {formatSalary(job.minSalary, job.maxSalary) && (
+                            </div>
+                            <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-xs text-muted-foreground">
                               <span className="flex items-center gap-1">
-                                <DollarSign className="h-3.5 w-3.5" />
-                                {formatSalary(job.minSalary, job.maxSalary)}
+                                <Users className="h-3 w-3" />
+                                {job.applicationCount || 0} apps
                               </span>
-                            )}
-                            {(job.minExperience != null || job.maxExperience != null) && (
-                              <span className="flex items-center gap-1">
-                                <Briefcase className="h-3.5 w-3.5" />
-                                {job.minExperience ?? 0}
-                                {job.maxExperience != null ? `-${job.maxExperience}` : "+"} yrs
-                              </span>
-                            )}
-                            <span className="flex items-center gap-1">
-                              <Clock className="h-3.5 w-3.5" />
-                              {timeAgo(job.createdAt)}
-                            </span>
-                          </div>
-                          <div className="flex gap-2 mt-2 sm:mt-0">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => openView(job)}
-                            >
-                              <Eye className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => openEdit(job)}
-                            >
-                              <Edit2 className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleToggle(job)}
-                            >
-                              {job.isActive ? (
-                                <Pause className="h-4 w-4" />
-                              ) : (
-                                <Play className="h-4 w-4" />
+                              {formatSalary(job.minSalary, job.maxSalary) && (
+                                <span className="flex items-center gap-1">
+                                  <IndianRupee className="h-3 w-3" />
+                                  {formatSalary(job.minSalary, job.maxSalary)}
+                                </span>
                               )}
+                              {(job.minExperience != null || job.maxExperience != null) && (
+                                <span className="flex items-center gap-1">
+                                  <Briefcase className="h-3 w-3" />
+                                  {job.minExperience ?? 0}
+                                  {job.maxExperience != null ? `-${job.maxExperience}` : "+"} yrs
+                                </span>
+                              )}
+                              <span className="flex items-center gap-1">
+                                <Clock className="h-3 w-3" />
+                                {timeAgo(job.createdAt)}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex gap-1.5 shrink-0">
+                            <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={() => openView(job)}>
+                              <Eye className="h-3.5 w-3.5" />
+                            </Button>
+                            <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={() => openEdit(job)}>
+                              <Edit2 className="h-3.5 w-3.5" />
+                            </Button>
+                            <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={() => handleToggle(job)}>
+                              {job.isActive ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
                             </Button>
                             <Button
                               size="sm"
-                              variant="outline"
-                              className="text-destructive hover:text-destructive"
+                              variant="ghost"
+                              className="h-8 w-8 p-0 text-destructive hover:text-destructive"
                               onClick={() => setDeleteId(job.id)}
                             >
-                              <Trash2 className="h-4 w-4" />
+                              <Trash2 className="h-3.5 w-3.5" />
                             </Button>
                           </div>
                         </div>
@@ -472,232 +458,289 @@ export default function JobPostings() {
         </Tabs>
       </div>
 
+      {/* Create/Edit Modal — 3-step wizard */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-2xl">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader className="pb-2">
+            <DialogTitle className="text-xl">
               {editingJob ? "Edit Job Posting" : "Post New Job"}
             </DialogTitle>
-            <DialogDescription>
-              {editingJob
-                ? "Update your job listing details"
-                : "Fill in the details to create a new job posting"}
+            <DialogDescription className="text-sm">
+              {editingJob ? "Update your job listing" : "Create a new job posting"}
             </DialogDescription>
+
+            {/* Step indicator */}
+            <div className="flex items-center justify-center gap-0 mt-4 px-2">
+              {FORM_STEPS.map((s, i) => (
+                <div key={s.id} className="flex items-center">
+                  <button
+                    type="button"
+                    onClick={() => s.id < formStep && setFormStep(s.id)}
+                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[0.7rem] font-medium transition-all ${
+                      formStep === s.id
+                        ? "bg-primary text-primary-foreground"
+                        : formStep > s.id
+                        ? "bg-green-500/15 text-green-500 cursor-pointer"
+                        : "bg-muted text-muted-foreground"
+                    }`}
+                  >
+                    {formStep > s.id ? (
+                      <Check className="h-3 w-3" />
+                    ) : (
+                      <s.icon className="h-3 w-3" />
+                    )}
+                    {s.label}
+                  </button>
+                  {i < FORM_STEPS.length - 1 && (
+                    <div className={`w-6 h-px mx-1 ${
+                      formStep > s.id ? "bg-green-500/40" : "bg-border/40"
+                    }`} />
+                  )}
+                </div>
+              ))}
+            </div>
           </DialogHeader>
 
-          <div className="space-y-5 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="modal-title">Job Title *</Label>
-              <Input
-                id="modal-title"
-                placeholder="e.g. Senior Software Engineer"
-                value={form.jobTitle}
-                onChange={e => updateForm("jobTitle", e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="modal-desc">Job Description *</Label>
-              <Textarea
-                id="modal-desc"
-                className="min-h-[120px]"
-                placeholder="Describe the role, responsibilities, and what makes it exciting..."
-                value={form.jobDescription}
-                onChange={e => updateForm("jobDescription", e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="modal-req">Requirements</Label>
-              <Textarea
-                id="modal-req"
-                className="min-h-[80px]"
-                placeholder="List the key qualifications and requirements..."
-                value={form.jobRequirement}
-                onChange={e => updateForm("jobRequirement", e.target.value)}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Job Type</Label>
-                <Select
-                  value={form.jobType || ""}
-                  onValueChange={v => updateForm("jobType", v || undefined)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {jobTypeOptions.map(opt => (
-                      <SelectItem key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>Work Type</Label>
-                <Select
-                  value={form.workType || ""}
-                  onValueChange={v => updateForm("workType", v || undefined)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select work type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {workTypeOptions.map(opt => (
-                      <SelectItem key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Location</Label>
-              <Select
-                value={form.jobLocation || ""}
-                onValueChange={v => updateForm("jobLocation", v || undefined)}
+          <AnimatePresence mode="wait">
+            {/* Step 1: Role Details */}
+            {formStep === 1 && (
+              <motion.div
+                key="step1"
+                initial={{ opacity: 0, x: -15 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -15 }}
+                transition={{ duration: 0.2 }}
+                className="space-y-4 py-2"
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select location" />
-                </SelectTrigger>
-                <SelectContent>
-                  {indianCities.map(city => (
-                    <SelectItem key={city} value={city}>{city}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="modal-minexp">Min Experience (years)</Label>
-                <Input
-                  id="modal-minexp"
-                  type="number"
-                  min="0"
-                  value={form.minExperience ?? ""}
-                  onChange={e =>
-                    updateForm("minExperience", e.target.value ? Number(e.target.value) : 0)
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="modal-maxexp">Max Experience (years)</Label>
-                <Input
-                  id="modal-maxexp"
-                  type="number"
-                  min="0"
-                  value={form.maxExperience ?? ""}
-                  onChange={e =>
-                    updateForm(
-                      "maxExperience",
-                      e.target.value ? Number(e.target.value) : undefined,
-                    )
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="modal-minsal">Min Salary (₹/year)</Label>
-                <Input
-                  id="modal-minsal"
-                  type="number"
-                  min="0"
-                  placeholder="e.g. 600000"
-                  value={form.minSalary ?? ""}
-                  onChange={e => updateForm("minSalary", e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="modal-maxsal">Max Salary (₹/year)</Label>
-                <Input
-                  id="modal-maxsal"
-                  type="number"
-                  min="0"
-                  placeholder="e.g. 1500000"
-                  value={form.maxSalary ?? ""}
-                  onChange={e => updateForm("maxSalary", e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="modal-slots">Open Slots</Label>
-              <Input
-                id="modal-slots"
-                type="number"
-                min="1"
-                value={form.openSlots ?? 1}
-                onChange={e => updateForm("openSlots", Number(e.target.value) || 1)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Required Skills</Label>
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Type a skill and press Add"
-                  value={skillInput}
-                  onChange={e => setSkillInput(e.target.value)}
-                  onKeyDown={e => {
-                    if (e.key === "Enter") {
-                      e.preventDefault()
-                      addSkill()
-                    }
-                  }}
-                />
-                <Button type="button" variant="outline" onClick={addSkill}>
-                  Add
-                </Button>
-              </div>
-              {form.skills && form.skills.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {form.skills.map(skill => (
-                    <Badge
-                      key={skill}
-                      variant="secondary"
-                      className="cursor-pointer hover:bg-destructive/20"
-                      onClick={() => removeSkill(skill)}
-                    >
-                      {skill}
-                      <X className="h-3 w-3 ml-1" />
-                    </Badge>
-                  ))}
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Job Title <span className="text-red-400">*</span></Label>
+                  <Input
+                    placeholder="e.g. Senior Software Engineer"
+                    value={form.jobTitle}
+                    onChange={e => updateForm("jobTitle", e.target.value)}
+                  />
                 </div>
-              )}
-            </div>
-          </div>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSubmit} disabled={submitting} className="btn-hero">
-              {submitting ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Saving...
-                </>
-              ) : editingJob ? (
-                "Update Job"
-              ) : (
-                "Post Job"
-              )}
-            </Button>
-          </DialogFooter>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <Label className="text-sm">Job Type</Label>
+                    <Select value={form.jobType || ""} onValueChange={v => updateForm("jobType", v || undefined)}>
+                      <SelectTrigger className="text-sm">
+                        <SelectValue placeholder="Select" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {jobTypeOptions.map(opt => (
+                          <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-sm">Work Type</Label>
+                    <Select value={form.workType || ""} onValueChange={v => updateForm("workType", v || undefined)}>
+                      <SelectTrigger className="text-sm">
+                        <SelectValue placeholder="Select" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {workTypeOptions.map(opt => (
+                          <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Location</Label>
+                  <Select value={form.jobLocation || ""} onValueChange={v => updateForm("jobLocation", v || undefined)}>
+                    <SelectTrigger>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                        <SelectValue placeholder="Select location" />
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {indianCities.map(city => (
+                        <SelectItem key={city} value={city}>{city}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Open Slots</Label>
+                  <Input
+                    type="number"
+                    min="1"
+                    value={form.openSlots ?? 1}
+                    onChange={e => updateForm("openSlots", Number(e.target.value) || 1)}
+                  />
+                </div>
+
+                <Button className="w-full btn-hero h-10" onClick={handleNextStep} disabled={!form.jobTitle?.trim()}>
+                  Continue <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </motion.div>
+            )}
+
+            {/* Step 2: Description & Skills */}
+            {formStep === 2 && (
+              <motion.div
+                key="step2"
+                initial={{ opacity: 0, x: 15 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 15 }}
+                transition={{ duration: 0.2 }}
+                className="space-y-4 py-2"
+              >
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Job Description <span className="text-red-400">*</span></Label>
+                  <Textarea
+                    className="min-h-[6rem] text-sm"
+                    placeholder="Describe the role, responsibilities, and what makes it exciting..."
+                    value={form.jobDescription}
+                    onChange={e => updateForm("jobDescription", e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Requirements</Label>
+                  <Textarea
+                    className="min-h-[4.5rem] text-sm"
+                    placeholder="List the key qualifications and requirements..."
+                    value={form.jobRequirement}
+                    onChange={e => updateForm("jobRequirement", e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Required Skills</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Type a skill and press Enter"
+                      className="text-sm"
+                      value={skillInput}
+                      onChange={e => setSkillInput(e.target.value)}
+                      onKeyDown={e => {
+                        if (e.key === "Enter") {
+                          e.preventDefault()
+                          addSkill()
+                        }
+                      }}
+                    />
+                    <Button type="button" variant="outline" size="sm" className="shrink-0 h-auto" onClick={addSkill}>
+                      Add
+                    </Button>
+                  </div>
+                  {form.skills && form.skills.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mt-2">
+                      {form.skills.map(skill => (
+                        <Badge
+                          key={skill}
+                          variant="secondary"
+                          className="cursor-pointer hover:bg-destructive/20 text-xs"
+                          onClick={() => removeSkill(skill)}
+                        >
+                          {skill}
+                          <X className="h-2.5 w-2.5 ml-1" />
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex gap-3">
+                  <Button variant="outline" className="h-10 px-4" onClick={() => setFormStep(1)}>
+                    <ArrowLeft className="h-4 w-4" />
+                  </Button>
+                  <Button className="flex-1 btn-hero h-10" onClick={handleNextStep} disabled={!form.jobDescription?.trim()}>
+                    Continue <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Step 3: Compensation & Experience */}
+            {formStep === 3 && (
+              <motion.div
+                key="step3"
+                initial={{ opacity: 0, x: 15 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 15 }}
+                transition={{ duration: 0.2 }}
+                className="space-y-4 py-2"
+              >
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Experience (years)</Label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Input
+                      type="number"
+                      min="0"
+                      placeholder="Min"
+                      value={form.minExperience ?? ""}
+                      onChange={e => updateForm("minExperience", e.target.value ? Number(e.target.value) : 0)}
+                    />
+                    <Input
+                      type="number"
+                      min="0"
+                      placeholder="Max"
+                      value={form.maxExperience ?? ""}
+                      onChange={e => updateForm("maxExperience", e.target.value ? Number(e.target.value) : undefined)}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label className="text-sm">Salary Range (₹ per year)</Label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Input
+                      type="number"
+                      min="0"
+                      placeholder="e.g. 600000"
+                      value={form.minSalary ?? ""}
+                      onChange={e => updateForm("minSalary", e.target.value)}
+                    />
+                    <Input
+                      type="number"
+                      min="0"
+                      placeholder="e.g. 1500000"
+                      value={form.maxSalary ?? ""}
+                      onChange={e => updateForm("maxSalary", e.target.value)}
+                    />
+                  </div>
+                  {(form.minSalary || form.maxSalary) && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Displays as: {formatSalary(form.minSalary || null, form.maxSalary || null) || "—"}
+                    </p>
+                  )}
+                </div>
+
+                <div className="flex gap-3 pt-2">
+                  <Button variant="outline" className="h-10 px-4" onClick={() => setFormStep(2)}>
+                    <ArrowLeft className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    className="flex-1 btn-hero h-10"
+                    onClick={handleSubmit}
+                    disabled={submitting}
+                  >
+                    {submitting ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Saving...
+                      </>
+                    ) : editingJob ? "Update Job" : "Post Job"}
+                  </Button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </DialogContent>
       </Dialog>
 
+      {/* View Job Dialog */}
       <Dialog open={viewOpen} onOpenChange={setViewOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           {viewLoading ? (
             <div className="flex justify-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -705,81 +748,81 @@ export default function JobPostings() {
           ) : viewJob ? (
             <>
               <DialogHeader>
-                <div className="flex items-start justify-between">
+                <div className="flex items-start justify-between gap-3">
                   <div>
-                    <DialogTitle className="text-2xl">{viewJob.jobTitle}</DialogTitle>
-                    <DialogDescription className="text-base mt-1">
+                    <DialogTitle className="text-xl">{viewJob.jobTitle}</DialogTitle>
+                    <DialogDescription className="text-sm mt-1">
                       {viewJob.companyName || "Your Company"}
                     </DialogDescription>
                   </div>
                   <Badge
                     variant={viewJob.isActive ? "default" : "secondary"}
-                    className={
+                    className={`shrink-0 text-xs ${
                       viewJob.isActive
                         ? "bg-green-500/10 text-green-500 border-green-500/20"
                         : "bg-yellow-500/10 text-yellow-500 border-yellow-500/20"
-                    }
+                    }`}
                   >
                     {viewJob.isActive ? "Active" : "Paused"}
                   </Badge>
                 </div>
               </DialogHeader>
 
-              <div className="space-y-5 py-4">
-                <div className="flex flex-wrap gap-3">
+              <div className="space-y-4 py-2">
+                <div className="flex flex-wrap gap-2">
                   {viewJob.jobType && (
-                    <Badge variant="outline">
-                      <Briefcase className="h-3.5 w-3.5 mr-1" />
+                    <Badge variant="outline" className="text-xs">
+                      <Briefcase className="h-3 w-3 mr-1" />
                       {formatJobType(viewJob.jobType)}
                     </Badge>
                   )}
                   {viewJob.workType && (
-                    <Badge variant="outline">
+                    <Badge variant="outline" className="text-xs">
                       {formatJobType(viewJob.workType)}
                     </Badge>
                   )}
                   {viewJob.jobLocation && (
-                    <Badge variant="outline">
-                      <MapPin className="h-3.5 w-3.5 mr-1" />
+                    <Badge variant="outline" className="text-xs">
+                      <MapPin className="h-3 w-3 mr-1" />
                       {viewJob.jobLocation}
                     </Badge>
                   )}
                   {formatSalary(viewJob.minSalary, viewJob.maxSalary) && (
-                    <Badge variant="outline">
-                      <DollarSign className="h-3.5 w-3.5 mr-1" />
+                    <Badge variant="outline" className="text-xs">
+                      <IndianRupee className="h-3 w-3 mr-1" />
                       {formatSalary(viewJob.minSalary, viewJob.maxSalary)}
                     </Badge>
                   )}
                   {(viewJob.minExperience != null || viewJob.maxExperience != null) && (
-                    <Badge variant="outline">
+                    <Badge variant="outline" className="text-xs">
                       {viewJob.minExperience ?? 0}
-                      {viewJob.maxExperience != null ? `-${viewJob.maxExperience}` : "+"} yrs exp
+                      {viewJob.maxExperience != null ? `-${viewJob.maxExperience}` : "+"} yrs
                     </Badge>
                   )}
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="grid grid-cols-2 gap-3">
                   <div className="bg-secondary/20 rounded-lg p-3">
-                    <p className="text-muted-foreground">Applications</p>
+                    <p className="text-xs text-muted-foreground">Applications</p>
                     <p className="text-lg font-semibold">{viewJob.applicationCount || 0}</p>
                   </div>
                   <div className="bg-secondary/20 rounded-lg p-3">
-                    <p className="text-muted-foreground">Open Slots</p>
+                    <p className="text-xs text-muted-foreground">Open Slots</p>
                     <p className="text-lg font-semibold">{viewJob.openSlots || 1}</p>
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="font-semibold mb-2">Description</h4>
-                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                  <h4 className="text-sm font-semibold mb-1.5">Description</h4>
+                  <p className="text-xs text-muted-foreground whitespace-pre-wrap leading-relaxed">
                     {viewJob.jobDescription}
                   </p>
                 </div>
 
                 {viewJob.jobRequirement && (
                   <div>
-                    <h4 className="font-semibold mb-2">Requirements</h4>
-                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                    <h4 className="text-sm font-semibold mb-1.5">Requirements</h4>
+                    <p className="text-xs text-muted-foreground whitespace-pre-wrap leading-relaxed">
                       {viewJob.jobRequirement}
                     </p>
                   </div>
@@ -787,16 +830,16 @@ export default function JobPostings() {
 
                 {viewJob.skills && viewJob.skills.length > 0 && (
                   <div>
-                    <h4 className="font-semibold mb-2">Required Skills</h4>
-                    <div className="flex flex-wrap gap-2">
+                    <h4 className="text-sm font-semibold mb-1.5">Required Skills</h4>
+                    <div className="flex flex-wrap gap-1.5">
                       {viewJob.skills.map(skill => (
-                        <Badge key={skill} variant="secondary">{skill}</Badge>
+                        <Badge key={skill} variant="secondary" className="text-xs">{skill}</Badge>
                       ))}
                     </div>
                   </div>
                 )}
 
-                <p className="text-xs text-muted-foreground">
+                <p className="text-[0.65rem] text-muted-foreground">
                   Posted {timeAgo(viewJob.createdAt)}
                 </p>
               </div>
@@ -805,14 +848,14 @@ export default function JobPostings() {
         </DialogContent>
       </Dialog>
 
+      {/* Delete confirmation */}
       <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Job Posting?</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogDescription className="text-sm">
               This will permanently delete this job posting and remove all associated skill
-              requirements. Applications from candidates will not be affected. This action cannot
-              be undone.
+              requirements. Applications will not be affected.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

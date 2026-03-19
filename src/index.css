@@ -94,20 +94,20 @@
 
   html {
     @apply antialiased;
-    font-family: "Raleway", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Inter", "SF Pro Text", system-ui, sans-serif;
     font-size: 16px;
   }
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: "Raleway", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Inter", "SF Pro Text", system-ui, sans-serif;
     line-height: 1.6;
     letter-spacing: 0.01em;
   }
 
-  /* Typography — Poppins for headings, Raleway for body */
+  /* Typography — Poppins for headings, Inter for body */
   h1, h2, h3, h4, h5, h6 {
-    font-family: "Poppins", "Raleway", ui-sans-serif, system-ui, sans-serif;
+    font-family: "Poppins", "Inter", system-ui, sans-serif;
     line-height: 1.2;
     letter-spacing: -0.02em;
   }
@@ -183,12 +183,15 @@
            transition-all duration-200;
   }
 
-  /* Hide number spinners */
-  input[type="number"] {
+  /* Input font is set outside @layer for specificity — see bottom of file */
+  input[type="number"],
+  input[type="tel"] {
     -moz-appearance: textfield;
   }
   input[type="number"]::-webkit-outer-spin-button,
-  input[type="number"]::-webkit-inner-spin-button {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="tel"]::-webkit-outer-spin-button,
+  input[type="tel"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
@@ -332,5 +335,14 @@ input,
 textarea,
 select,
 button {
-  font-family: "Raleway", ui-sans-serif, system-ui, sans-serif !important;
+  font-family: "Inter", "SF Pro Text", system-ui, sans-serif !important;
+}
+input,
+textarea,
+select {
+  font-variant-numeric: tabular-nums !important;
+}
+input::placeholder,
+textarea::placeholder {
+  font-family: "Inter", "SF Pro Text", system-ui, sans-serif !important;
 }
